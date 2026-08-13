@@ -27,11 +27,14 @@ if __name__ == "__main__":
             EvalResult(
                 case_id=case.case_id,
                 model_name=model_name,
+                injector=case.injector,
+                tags=case.tags,
+                should_act=case.expectation.should_act,
                 actions=model_actions,
                 diff=diff,
                 error=None,
             )
         )
 
-    summary = aggregate_scores([r.diff for r in results if r.diff])
+    summary = aggregate_scores(results)
     print(summary.model_dump_json(indent=2))
