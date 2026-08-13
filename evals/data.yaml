@@ -1,0 +1,50 @@
+templates:
+  - reference: "1"
+    mode: "ocean"
+    place_of_receipt: "NLRTM"
+    place_of_delivery: "SGSIN"
+    legs:
+      - mode: "ocean"
+        dwell_time: null
+        port_of_loading: "NLRTM"
+        port_of_discharge: "SGSIN"
+        transit_time: [18, 24]
+  - reference: "2"
+    mode: "ocean"
+    place_of_receipt: "NLRTM"
+    place_of_delivery: "COCTG"
+    legs:
+      - mode: "ocean"
+        dwell_time: null
+        port_of_loading: "NLRTM"
+        port_of_discharge: "PAMIT"
+        transit_time: [18, 24]
+      - mode: "ocean"
+        dwell_time: [1, 4]
+        port_of_loading: "PAMIT"
+        port_of_discharge: "COCTG"
+        transit_time: [4, 6]
+  - reference: "3"
+    mode: "air"
+    place_of_receipt: "COBOG"
+    place_of_delivery: "USMIA"
+    legs:
+      - mode: "air"
+        dwell_time: null
+        port_of_loading: "COBOG"
+        port_of_discharge: "USMIA"
+        transit_time: [0, 1]
+
+locations:
+  - locode: "NLRTM"
+    name: "Rotterdam"
+  - locode: "SGSIN"
+    name: "Singapore"
+  - locode: "PAMIT"
+    name: "Panama"
+  - locode: "COCTG"
+    name: "Cartagena"
+  - locode: "COBOG"
+    name: "Bogota"
+  - locode: "USMIA"
+    name: "Miami"

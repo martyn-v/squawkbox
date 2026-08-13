@@ -1,0 +1,28 @@
+[project]
+name = "squawk"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "martyn-v", email = "m@rtyn.io" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "faker>=40.36.0",
+    "langchain-ollama>=1.1.0",
+    "langgraph>=1.2.11",
+    "pydantic>=2.13.4",
+    "pyyaml>=6.0.3",
+]
+
+[project.scripts]
+squawk = "squawk:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
