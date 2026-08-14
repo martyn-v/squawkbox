@@ -10,6 +10,7 @@ from evals.models import (
 from squawk.models import (
     Action,
     ArrivalDelayEvent,
+    Contact,
     DepartureDelayEvent,
     EscalateAction,
     Shipment,
@@ -63,7 +64,12 @@ class ArrivalDelayInjector(ScenarioInjector):
                 new_value=shipment.legs[leg_index].eta + timedelta(days=delay_days),
             ),
             NotifyAction(
-                recipients=[shipment.contact.email] if shipment.contact.email else [],
+                recipients=[
+                    Contact(
+                        name=shipment.customer_contact.name,
+                        email=shipment.customer_contact.email,
+                    )
+                ],
             ),
         ]
 
@@ -125,7 +131,12 @@ class DepartureDelayInjector(ScenarioInjector):
                 new_value=shipment.legs[leg_index].eta + timedelta(days=delay_days),
             ),
             NotifyAction(
-                recipients=[shipment.contact.email] if shipment.contact.email else [],
+                recipients=[
+                    Contact(
+                        name=shipment.customer_contact.name,
+                        email=shipment.customer_contact.email,
+                    )
+                ],
             ),
         ]
 

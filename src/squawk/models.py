@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Annotated, Any
 from typing_extensions import Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 type EventType = Literal["booked", "gate_in", "departed", "arrived", "delivered"]
@@ -29,14 +29,19 @@ class Leg(BaseModel):
 
 
 class Contact(BaseModel):
-    email: str | None
+    # Frozen so contacts hash by value
+    model_config = ConfigDict(frozen=True)
+
+    name: str
+    email: str
 
 
 class Shipment(BaseModel):
     id: str
     reference: str
     booked_at: date
-    contact: Contact
+    owner: Contact
+    customer_contact: Contact
     transport_mode: TransportMode
     place_of_receipt: Location
     port_of_loading: Location
@@ -83,7 +88,7 @@ class NotifyAction(BaseModel):
     """Action that notifies a human operator about something. The message is judge material only, never diffed."""
 
     type: Literal["notify"] = "notify"
-    recipients: list[str]
+    recipients: Annotated[list[Contact], "List of people to notify"]
     message: str | None = None  # judge material only, never diffed
 
 

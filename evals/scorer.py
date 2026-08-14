@@ -25,9 +25,11 @@ def _cmp_notify(a: NotifyAction, b: NotifyAction) -> list[str]:
     got, want = set(a.recipients), set(b.recipients)
     reasons = []
     if missing := want - got:
-        reasons.append(f"missing recipients: {sorted(missing)}")
+        reasons.append(f"missing recipients: {sorted(missing, key=lambda c: c.email)}")
     if unexpected := got - want:
-        reasons.append(f"unexpected recipients: {sorted(unexpected)}")
+        reasons.append(
+            f"unexpected recipients: {sorted(unexpected, key=lambda c: c.email)}"
+        )
     return reasons
 
 
