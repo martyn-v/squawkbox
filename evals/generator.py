@@ -9,7 +9,7 @@ from evals.models import (
     Expectation,
     TemplateShipment,
 )
-from evals.scenarios import ArrivalDelayInjector
+from evals.scenarios import ArrivalDelayInjector, DepartureDelayInjector
 from squawk.models import Contact, Event, Leg, Location, Shipment, RoutineEvent
 
 
@@ -199,7 +199,7 @@ if __name__ == "__main__":
                 )
                 shipment = progress_shipment(shipment, child_rng)
 
-                injectors = [ArrivalDelayInjector()]
+                injectors = [ArrivalDelayInjector(), DepartureDelayInjector()]
                 candidates = [inj for inj in injectors if inj.is_applicable(shipment)]
                 if candidates:
                     injector = child_rng.choice(candidates)

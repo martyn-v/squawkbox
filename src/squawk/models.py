@@ -53,6 +53,12 @@ class ArrivalDelayEvent(BaseModel):
     delay_days: int
 
 
+class DepartureDelayEvent(BaseModel):
+    type: Literal["departure_delay"] = "departure_delay"
+    leg_index: int
+    delay_days: int
+
+
 class RoutineEvent(BaseModel):
     type: Literal["eta_confirmed"] = "eta_confirmed"
     leg_index: int
@@ -60,7 +66,7 @@ class RoutineEvent(BaseModel):
 
 
 IncomingEvent = Annotated[
-    ArrivalDelayEvent | RoutineEvent,
+    ArrivalDelayEvent | DepartureDelayEvent | RoutineEvent,
     Field(discriminator="type"),
 ]
 
