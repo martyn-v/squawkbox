@@ -4,12 +4,14 @@ from squawk.models import Action, IncomingEvent, Location, Shipment, TransportMo
 
 
 class EvalData(BaseModel):
+    """The data used to generate EvalCases, from data.yaml."""
+
     templates: list[TemplateShipment]
     locations: list[Location]
 
 
 class TemplateLeg(BaseModel):
-    """A template for a leg of a shipment, used to generate legs with random dates. From data.yaml."""
+    """A template for a leg of a shipment, used to generate legs with random dates."""
 
     mode: TransportMode
     dwell_time: list[int] | None
@@ -19,7 +21,7 @@ class TemplateLeg(BaseModel):
 
 
 class TemplateShipment(BaseModel):
-    """A template for a shipment, used to generate shipments with random dates and events. From data.yaml."""
+    """A template for a shipment, used to generate shipments with random dates and events."""
 
     reference: str
     mode: TransportMode
@@ -38,17 +40,23 @@ class TemplateShipment(BaseModel):
 
 
 class Expectation(BaseModel):
+    """What the agent is expected to do in response to an incoming event."""
+
     should_act: bool
     actions: list[Action]
 
 
 class InjectionResult(BaseModel):
+    """Result of injecting an event into a shipment, for scoring purposes."""
+
     event: IncomingEvent
     expectation: Expectation
     tags: list[str] = []
 
 
 class EvalCase(BaseModel):
+    """A single test case for an agent, including the shipment state, incoming event, and expected actions."""
+
     # identity & reproducibility
     case_id: str  # "case-00042"
     seed: str  # the child seed string, e.g. "1-3-7"
@@ -66,13 +74,10 @@ class EvalCase(BaseModel):
     # what the scorer sees
     expectation: Expectation
 
-    # what the agent generated (for scoring)
-    actions: list[Action] | None = (
-        None  # filled in by the runner, not part of the case itself
-    )
-
 
 class EvalResult(BaseModel):
+    """The result of scoring an agent on a single EvalCase."""
+
     case_id: str
     model_name: str
     injector: str | None = None  # slicing metadata, copied from the EvalCase
