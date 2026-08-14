@@ -19,6 +19,8 @@ from squawk.models import (
 
 
 class ScenarioInjector(ABC):
+    """An abstract base class for injecting scenarios into shipments. Subclasses must implement the is_applicable and inject methods."""
+
     @abstractmethod
     def is_applicable(self, shipment: Shipment) -> bool:
         """Return true if the scenario can be applied to the given shipment, false otherwise."""

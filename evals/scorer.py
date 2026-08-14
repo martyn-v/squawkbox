@@ -21,6 +21,7 @@ Comparator = Callable[[Action, Action], list[str]]
 
 
 def _cmp_notify(a: NotifyAction, b: NotifyAction) -> list[str]:
+    """Compare two NotifyAction instances and return a list of human-readable reasons for any mismatches in their recipients."""
     got, want = set(a.recipients), set(b.recipients)
     reasons = []
     if missing := want - got:
@@ -31,6 +32,7 @@ def _cmp_notify(a: NotifyAction, b: NotifyAction) -> list[str]:
 
 
 def _cmp_update_property(a: UpdatePropertyAction, b: UpdatePropertyAction) -> list[str]:
+    """Compare two UpdatePropertyAction instances and return a list of human-readable reasons for any mismatches in their paths or new values."""
     # A wrong path makes the value comparison meaningless (different property
     # entirely), so it short-circuits rather than stacking a second reason.
     if a.path != b.path:
@@ -50,6 +52,7 @@ COMPARATORS: dict[str, Callable[..., list[str]]] = {
 
 
 def _mismatches(agent_action: Action, expected_action: Action) -> list[str]:
+    """Return a list of human-readable reasons why the agent action does not match the expected action, or an empty list if they match exactly."""
     comparator = COMPARATORS.get(agent_action.type)
     if comparator is None:
         raise ValueError(

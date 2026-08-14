@@ -20,6 +20,7 @@ def load_data(path: str) -> EvalData:
 
 
 def lookup_location(locode: str, locations_by_locode: dict[str, Location]) -> Location:
+    """Look up a Location by its locode in the provided dictionary. Raises ValueError if not found."""
     try:
         return locations_by_locode[locode]
     except KeyError:
@@ -34,6 +35,7 @@ def generate_shipment(
     rng: Random,
     locations: dict[str, Location],
 ) -> Shipment:
+    """Generate a Shipment instance based on the provided template, using the given random number generator for date generation. The shipment's legs are created according to the template's specifications, and the shipment is assigned a unique ID and reference."""
     fake = Faker()
     fake.seed_instance(rng.randint(0, 2**32))
     anchor_date = fake.date_between(start_date="-1y", end_date="today")
@@ -83,6 +85,7 @@ def generate_shipment(
 
 
 def build_milestones(shipment: Shipment) -> list[tuple[str, date]]:
+    """Build a list of milestones for the shipment, each represented as a tuple of (milestone_name, milestone_date). The milestones include booking, gate-in, departure and arrival for each leg, and final delivery. The list is sorted in chronological order."""
     milestones = []
     milestones.append(("booked", shipment.booked_at))
     milestones.append(
@@ -154,7 +157,7 @@ def apply_milestone(shipment: Shipment, milestone: tuple[str, date], rng: Random
 
 
 def progress_shipment(shipment: Shipment, rng: Random) -> Shipment:
-    """Progress a shipment through its legs, generating events and updating dates."""
+    """Progress a shipment through its lifecycle upto a random milestone, generating events and updating dates."""
     milestones = build_milestones(shipment)  # flatten plan, sorted
 
     upto = rng.randint(
@@ -170,6 +173,7 @@ def progress_shipment(shipment: Shipment, rng: Random) -> Shipment:
 
 
 def shipment_tags(shipment: Shipment) -> list[str]:
+    """Generate a list of tags for the shipment based on its characteristics, such as whether it is a transshipment or direct shipment, and its progress state (pre-departure, underway, or arrived)."""
     tags = []
     tags.append("transshipment" if len(shipment.legs) > 1 else "direct")
 
@@ -184,24 +188,35 @@ def shipment_tags(shipment: Shipment) -> list[str]:
     return tags
 
 
+INJECTORS = [ArrivalDelayInjector(), DepartureDelayInjector()]
+DEFAULT_SEED = 42
+VARIANTS_PER_TEMPLATE = 10
+DEFAULT_DATA_PATH = "evals/data.yaml"
+DEFAULT_OUTPUT_PATH = "evals/cases.jsonl"
+
 if __name__ == "__main__":
-    data = load_data("evals/data.yaml")
+    data = load_data(DEFAULT_DATA_PATH)
     locations_by_locode = {loc.locode: loc for loc in data.locations}
-    seed = 2
-    print("Seed:", seed)
-    with open("evals/cases.jsonl", "w") as f:
-        for variant in range(10):
+    seed = DEFAULT_SEED
+
+    with open(DEFAULT_OUTPUT_PATH, "w") as f:
+        for variant in range(VARIANTS_PER_TEMPLATE):
             for index, template in enumerate(data.templates):
                 child_seed = f"{seed}-{index}-{variant}"
                 child_rng = Random(child_seed)
+
+                # Generate a clean shipment
                 shipment = generate_shipment(
                     index, template, child_rng, locations_by_locode
                 )
+
+                # Progress the shipment through its lifecycle to a random milestone, generating events and updating leg dates accordingly.
                 shipment = progress_shipment(shipment, child_rng)
 
-                injectors = [ArrivalDelayInjector(), DepartureDelayInjector()]
-                candidates = [inj for inj in injectors if inj.is_applicable(shipment)]
+                candidates = [inj for inj in INJECTORS if inj.is_applicable(shipment)]
+
                 if candidates:
+                    # Randomly select an applicable injector and inject an event into the shipment, generating the expected actions and tags for scoring.
                     injector = child_rng.choice(candidates)
                     result = injector.inject(shipment, child_rng)
                     injector_name, event, expectation, extra_tags = (
@@ -211,6 +226,7 @@ if __name__ == "__main__":
                         result.tags,
                     )
                 else:
+                    # No applicable injectors; generate a clean case with a routine event and no expected actions. The case is tagged as "clean" for scoring purposes.
                     injector_name, event, expectation, extra_tags = (
                         None,
                         RoutineEvent(
