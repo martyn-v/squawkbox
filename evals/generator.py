@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 from random import Random
 import yaml
+import os
 from faker import Faker
 
 from evals.models import (
@@ -194,12 +195,15 @@ def shipment_tags(shipment: Shipment) -> list[str]:
 
 INJECTORS = [ArrivalDelayInjector(), DepartureDelayInjector()]
 DEFAULT_SEED = 42
-VARIANTS_PER_TEMPLATE = 10
-DEFAULT_DATA_PATH = "evals/data.yaml"
-DEFAULT_OUTPUT_PATH = "evals/cases.jsonl"
+VARIANTS_PER_TEMPLATE = 2
+DEFAULT_DATA_PATH = "evals/artifacts/data.yaml"
+DEFAULT_OUTPUT_PATH = "evals/fixtures/cases.jsonl"
 
 
 if __name__ == "__main__":
+    # Ensure output path exists
+    os.makedirs(os.path.dirname(DEFAULT_OUTPUT_PATH), exist_ok=True)
+
     logger.info("starting generator", seed=DEFAULT_SEED, variants=VARIANTS_PER_TEMPLATE)
     data = load_data(DEFAULT_DATA_PATH)
     locations_by_locode = {loc.locode: loc for loc in data.locations}

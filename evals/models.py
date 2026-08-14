@@ -86,6 +86,7 @@ class EvalResult(BaseModel):
     actions: list[Action]
     error: str | None = None
     diff: ScoreDiff
+    latency_ms: float
 
 
 class NearMiss(BaseModel):
@@ -179,3 +180,12 @@ class AggregateScore(BaseModel):
     by_injector: dict[str, SliceScore]  # None injector reported as "clean"
     by_tag: dict[str, SliceScore]
     by_action_type: dict[str, SliceScore]
+
+
+class EvalRunResults(BaseModel):
+    """The results of an evaluation run, including the overall scores and the per-case results."""
+
+    model: str
+    metadata: dict[str, str]
+    summary: AggregateScore
+    results: list[EvalResult]
