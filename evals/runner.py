@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 from langchain_ollama import ChatOllama
@@ -11,12 +12,18 @@ logger = get_logger("runner")
 
 
 DEFAULT_MODEL_NAME = "gemma4:31b"
+DEFAULT_MODEL_TEMP = 0.5
 DEFAULT_CASES_PATH = "evals/fixtures/cases.jsonl"
-DEFAULT_OUTPUT_PATH = "evals/results/results.json"
+DEFAULT_OUTPUT_PATH = "evals/results/"
 
 if __name__ == "__main__":
     # Ensure output path exists
-    os.makedirs(os.path.dirname(DEFAULT_OUTPUT_PATH), exist_ok=True)
+    os.makedirs(DEFAULT_OUTPUT_PATH, exist_ok=True)
+
+    output_file = os.path.join(
+        DEFAULT_OUTPUT_PATH,
+        f"{datetime.datetime.now(datetime.timezone.utc).isoformat()}.json",
+    )
 
     logger.info(
         "starting evaluation runner",
@@ -26,7 +33,7 @@ if __name__ == "__main__":
 
     model = ChatOllama(
         model=DEFAULT_MODEL_NAME,
-        temperature=0,
+        temperature=DEFAULT_MODEL_TEMP,
         format="json",
         reasoning=False,
     )
@@ -88,14 +95,14 @@ if __name__ == "__main__":
         results=results,
     )
 
-    with open(DEFAULT_OUTPUT_PATH, "w") as f:
+    with open(output_file, "w") as f:
         f.write(run_results.model_dump_json(indent=2))
 
     logger.info(
         "finished evaluation runner",
         model_name=DEFAULT_MODEL_NAME,
         cases_path=DEFAULT_CASES_PATH,
-        output_path=DEFAULT_OUTPUT_PATH,
+        output_path=output_file,
         total_cases=len(results),
         precision=summary.overall.precision,
         recall=summary.overall.recall,
