@@ -16,7 +16,8 @@ DEFAULT_MODEL_TEMP = 0.5
 DEFAULT_CASES_PATH = "evals/fixtures/cases.jsonl"
 DEFAULT_OUTPUT_PATH = "evals/results/"
 
-if __name__ == "__main__":
+
+def run():
     # Ensure output path exists
     os.makedirs(DEFAULT_OUTPUT_PATH, exist_ok=True)
 
@@ -107,3 +108,7 @@ if __name__ == "__main__":
         precision=summary.overall.precision,
         recall=summary.overall.recall,
     )
+
+
+if __name__ == "__main__":
+    run()

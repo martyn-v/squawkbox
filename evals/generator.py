@@ -201,7 +201,7 @@ DEFAULT_DATA_PATH = "evals/artifacts/data.yaml"
 DEFAULT_OUTPUT_PATH = "evals/fixtures/cases.jsonl"
 
 
-if __name__ == "__main__":
+def generate():
     # Ensure output path exists
     os.makedirs(os.path.dirname(DEFAULT_OUTPUT_PATH), exist_ok=True)
 
@@ -286,3 +286,7 @@ if __name__ == "__main__":
     logger.info(
         "finished generator", total_cases=counter, output_path=DEFAULT_OUTPUT_PATH
     )
+
+
+if __name__ == "__main__":
+    generate()
