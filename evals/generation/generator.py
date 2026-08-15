@@ -5,6 +5,7 @@ import os
 from evals.faker.providers import make_faker
 from evals.generation.injectors import (
     ArrivalDelayInjector,
+    CustomsHoldInjector,
     DepartureDelayInjector,
     RolledSailingInjector,
     RoutineEventInjector,
@@ -26,10 +27,11 @@ INJECTORS = [
     DepartureDelayInjector(),
     RoutineEventInjector(),
     RolledSailingInjector(),
+    CustomsHoldInjector(),
 ]
 
 
-def load_data(path: str) -> EvalData:
+def _load_data(path: str) -> EvalData:
     with open(path, "r") as f:
         data = yaml.safe_load(f)
     return EvalData.model_validate(data)
@@ -46,7 +48,7 @@ def generate(
         os.makedirs(output_dir, exist_ok=True)
 
     logger.info("starting generator", seed=seed, variants=variants)
-    data = load_data(data_path)
+    data = _load_data(data_path)
     locations_by_locode = {loc.locode: loc for loc in data.locations}
 
     counter = 0

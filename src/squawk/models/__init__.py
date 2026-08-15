@@ -13,6 +13,7 @@ from squawk.models.events import (
     IncomingEvent,
     RolledSailingEvent,
     RoutineEvent,
+    CustomsHoldEvent,
 )
 from squawk.models.actions import (
     Action,
@@ -40,4 +41,5 @@ __all__ = [
     "Shipment",
     "TransportMode",
     "UpdatePropertyAction",
+    "CustomsHoldEvent",
 ]

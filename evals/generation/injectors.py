@@ -19,6 +19,7 @@ from squawk.models import (
     UpdatePropertyAction,
     NotifyAction,
 )
+from squawk.models.events import CustomsHoldEvent
 
 
 class InjectionResult(BaseModel):
@@ -271,6 +272,47 @@ class RolledSailingInjector(ScenarioInjector):
 
         tags = ["rolled_sailing"]
         tags.append("final_leg" if is_final_leg else "connection_risk")
+
+        return InjectionResult(
+            event=event,
+            expectation=expectation,
+            tags=tags,
+        )
+
+
+class CustomsHoldInjector(ScenarioInjector):
+    """Injects a customs hold event into a shipment that has arrived but not yet been delivered."""
+
+    def is_applicable(self, shipment: Shipment) -> bool:
+        # Applicable if the shipment has the arrived event but not yet the delivered event.
+        # For simplicity, we check if the last event is "arrived" and the last leg has an ATA (actual time of arrival).
+        # The ATA check is required otherwise we generate custom holds on transhipment arrivals.
+        return (
+            shipment.events is not None
+            and shipment.events[-1].event_type == "arrived"
+            and shipment.legs[-1].ata is not None
+        )
+
+    def inject(self, shipment: Shipment, rng: Random, fake: Faker) -> InjectionResult:
+        event = CustomsHoldEvent()
+
+        actions: list[Action] = [
+            NotifyAction(
+                recipients=[
+                    Contact(
+                        name=shipment.customer_contact.name,
+                        email=shipment.customer_contact.email,
+                    )
+                ],
+            ),
+        ]
+
+        expectation = Expectation(
+            should_act=True,
+            actions=actions,
+        )
+
+        tags = ["customs_hold"]
 
         return InjectionResult(
             event=event,

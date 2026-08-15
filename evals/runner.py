@@ -48,6 +48,7 @@ def _eval_case(case: EvalCase, model: ChatOllama) -> EvalResult:
         "evaluating case",
         case_id=case.case_id,
         shipment_id=case.shipment.id,
+        incoming_event_type=case.incoming_event.type,
     )
 
     start_time = time.perf_counter()

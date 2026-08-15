@@ -24,6 +24,10 @@ class RolledSailingEvent(BaseModel):
     new_eta: date
 
 
+class CustomsHoldEvent(BaseModel):
+    type: Literal["customs_hold"] = "customs_hold"
+
+
 class RoutineEvent(BaseModel):
     type: Literal["eta_confirmed"] = "eta_confirmed"
     leg_index: int
@@ -31,6 +35,10 @@ class RoutineEvent(BaseModel):
 
 
 IncomingEvent = Annotated[
-    ArrivalDelayEvent | DepartureDelayEvent | RolledSailingEvent | RoutineEvent,
+    ArrivalDelayEvent
+    | DepartureDelayEvent
+    | RolledSailingEvent
+    | RoutineEvent
+    | CustomsHoldEvent,
     Field(discriminator="type"),
 ]
