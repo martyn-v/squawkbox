@@ -1,5 +1,4 @@
 import json
-from pydantic import ValidationError
 from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.language_models import BaseChatModel
