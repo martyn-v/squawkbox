@@ -126,6 +126,7 @@ class EvalRun(BaseModel):
     cases_hash: str | None  # sha256 over canonical case JSON, dataset identity
 
     # outcome
+    label: str | None = None  # free-text intent, e.g. "tighter escalation rules"
     run_at: str  # UTC ISO timestamp, also the results filename stem
     complete: bool  # False if the run aborted partway
     summary: AggregateScore

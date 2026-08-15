@@ -15,10 +15,13 @@ def label(path: str) -> str:
         with open(path) as f:
             run = json.load(f)
         overall = run["summary"]["overall"]
-        return (
+        line = (
             f"{os.path.basename(path)}  {run['model']}  "
             f"{overall['passed_cases']}/{overall['cases']} passed"
         )
+        if run.get("label"):
+            line += f'  "{run["label"]}"'
+        return line
     except (OSError, ValueError, KeyError, TypeError):
         return os.path.basename(path)
 

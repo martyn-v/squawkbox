@@ -150,6 +150,7 @@ def _write_report(
     output_file: str,
     run_at: str,
     complete: bool = True,
+    label: str | None = None,
 ) -> EvalRun:
     summary = aggregate_scores(results)
 
@@ -166,6 +167,7 @@ def _write_report(
         cases_path=cases_path,
         cases_meta=cases_meta,
         cases_hash=cases_hash,
+        label=label,
         run_at=run_at,
         complete=complete,
         summary=summary,
@@ -180,7 +182,11 @@ def _write_report(
 
 
 def run(
-    model_name: str, model_temperature: float, cases_path: str, output_path: str
+    model_name: str,
+    model_temperature: float,
+    cases_path: str,
+    output_path: str,
+    label: str | None = None,
 ) -> str:
     model, output_file, run_at = _setup(
         model_name, model_temperature, cases_path, output_path
@@ -228,6 +234,7 @@ def run(
                 output_file,
                 run_at,
                 complete=complete,
+                label=label,
             )
 
             logger.info(
