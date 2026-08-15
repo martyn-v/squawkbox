@@ -3,9 +3,9 @@ import os
 import time
 from langchain_ollama import ChatOllama
 from evals.logging import get_logger
-from evals.models import EvalCase, EvalResult, EvalRunResults
-
-from evals.scorer import aggregate_scores, score
+from evals.models import EvalCase
+from evals.scoring import aggregate_scores, score
+from evals.scoring.results import EvalResult, EvalRunResults
 from squawk.agent import run_agent
 
 logger = get_logger("runner")

@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Callable
 
-from evals.models import (
+from evals.models import Expectation
+from evals.scoring.results import (
     AggregateScore,
     DecisionMatrix,
     EvalResult,
-    Expectation,
     NearMiss,
     ScoreDiff,
     SliceScore,

@@ -2,21 +2,28 @@ from abc import ABC, abstractmethod
 from datetime import timedelta
 from random import Random
 
+from pydantic import BaseModel
 
-from evals.models import (
-    Expectation,
-    InjectionResult,
-)
+from evals.models import Expectation
 from squawk.models import (
     Action,
     ArrivalDelayEvent,
     Contact,
     DepartureDelayEvent,
     EscalateAction,
+    IncomingEvent,
     Shipment,
     UpdatePropertyAction,
     NotifyAction,
 )
+
+
+class InjectionResult(BaseModel):
+    """Result of injecting an event into a shipment, for scoring purposes."""
+
+    event: IncomingEvent
+    expectation: Expectation
+    tags: list[str] = []
 
 
 class ScenarioInjector(ABC):

@@ -17,20 +17,20 @@ def cli():
 @click.option(
     "--data",
     type=click.Path(exists=True, dir_okay=False),
-    default="evals/artifacts/data.yaml",
+    default="evals/data/data.yaml",
     help="Path to the data file.",
     show_default=True,
 )
 @click.option(
     "--output",
     type=click.Path(dir_okay=False, writable=True),
-    default="evals/fixtures/cases.jsonl",
+    default="evals/cases/cases.jsonl",
     help="Path to the output file.",
     show_default=True,
 )
 def generate(seed: int, variants: int, data: str, output: str):
     """Generate evaluation cases."""
-    from evals.generator import generate
+    from evals.generation import generate
 
     generate(seed, variants, data, output)
 
@@ -51,7 +51,7 @@ def generate(seed: int, variants: int, data: str, output: str):
 @click.option(
     "--cases",
     type=click.Path(exists=True, dir_okay=False),
-    default="evals/fixtures/cases.jsonl",
+    default="evals/cases/cases.jsonl",
     help="Path to the evaluation cases file.",
     show_default=True,
 )

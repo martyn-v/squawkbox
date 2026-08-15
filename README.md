@@ -18,7 +18,7 @@ The eval tooling is a click CLI invoked as a module:
 
 ```sh
 uv run -m evals --help      # list available commands
-uv run -m evals generate    # generate evaluation cases into evals/fixtures/
+uv run -m evals generate    # generate evaluation cases into evals/cases/
 ```
 
 ## The core model
