@@ -8,4 +8,5 @@ def default_model() -> BaseChatModel:
         temperature=0,
         format="json",
         reasoning=False,
+        client_kwargs={"timeout": 30},
     )

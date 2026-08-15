@@ -64,10 +64,5 @@ def run_agent(
         response.content if isinstance(response.content, str) else str(response.content)
     )
 
-    try:
-        reply = AgentReply.model_validate_json(raw)
-        return reply.actions
-    except ValidationError as e:
-        print("Validation error:", e)
-        print("Raw response:", raw)
-        raise e  # FIXME: handling
+    reply = AgentReply.model_validate_json(raw)
+    return reply.actions

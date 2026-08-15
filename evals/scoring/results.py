@@ -41,14 +41,13 @@ class EvalResult(BaseModel):
     """The result of scoring an agent on a single EvalCase."""
 
     case_id: str
-    model_name: str
     injector: str | None = None  # slicing metadata, copied from the EvalCase
     tags: list[str] = []
     should_act: bool = True  # what the expectation said, for the decision matrix
     actions: list[Action]
     error: str | None = None
-    diff: ScoreDiff
-    latency_ms: float
+    diff: ScoreDiff | None
+    latency_ms: float | None
 
 
 class SliceScore(BaseModel):
@@ -56,6 +55,7 @@ class SliceScore(BaseModel):
 
     cases: int
     passed_cases: int
+    errors: int = 0  # cases that never produced a scoreable reply
     exact_matches: int
     near_misses: int
     false_positives: int

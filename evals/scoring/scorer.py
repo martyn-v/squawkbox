@@ -133,11 +133,12 @@ def _slice_score(results: list[EvalResult]) -> SliceScore:
     """Micro-average a group of results: sum raw counts, let SliceScore divide."""
     return SliceScore(
         cases=len(results),
-        passed_cases=sum(r.diff.passed for r in results),
-        exact_matches=sum(len(r.diff.matched) for r in results),
-        near_misses=sum(len(r.diff.near_misses) for r in results),
-        false_positives=sum(len(r.diff.extra) for r in results),
-        false_negatives=sum(len(r.diff.missing) for r in results),
+        passed_cases=sum(r.diff.passed for r in results if r.diff is not None),
+        errors=sum(1 for r in results if r.error is not None),
+        exact_matches=sum(len(r.diff.matched) for r in results if r.diff is not None),
+        near_misses=sum(len(r.diff.near_misses) for r in results if r.diff is not None),
+        false_positives=sum(len(r.diff.extra) for r in results if r.diff is not None),
+        false_negatives=sum(len(r.diff.missing) for r in results if r.diff is not None),
     )
 
 
@@ -153,6 +154,9 @@ def _by_action_type(results: list[EvalResult]) -> dict[str, SliceScore]:
     """
     tallies: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     for r in results:
+        if r.diff is None:
+            continue
+
         seen: set[str] = set()
         failed: set[str] = set()
         for action in r.diff.matched:
@@ -205,11 +209,14 @@ def aggregate_scores(results: list[EvalResult]) -> AggregateScore:
         for tag in r.tags:
             by_tag[tag].append(r)
 
+    # Errored cases never made a decision — an empty action list from a crash
+    # is not "stayed quiet", so they are excluded from the matrix entirely.
+    decided = [r for r in results if r.error is None]
     decisions = DecisionMatrix(
-        true_act=sum(1 for r in results if r.should_act and r.actions),
-        missed_act=sum(1 for r in results if r.should_act and not r.actions),
-        false_alarm=sum(1 for r in results if not r.should_act and r.actions),
-        true_quiet=sum(1 for r in results if not r.should_act and not r.actions),
+        true_act=sum(1 for r in decided if r.should_act and r.actions),
+        missed_act=sum(1 for r in decided if r.should_act and not r.actions),
+        false_alarm=sum(1 for r in decided if not r.should_act and r.actions),
+        true_quiet=sum(1 for r in decided if not r.should_act and not r.actions),
     )
 
     return AggregateScore(
