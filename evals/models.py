@@ -11,8 +11,8 @@ class Expectation(BaseModel):
     actions: list[Action] = []
 
 
-class EvalCasesMeta(BaseModel):
-    """Metadata for a set of evaluation cases."""
+class CaseFileMeta(BaseModel):
+    """Provenance header — the first line of a generated case file."""
 
     kind: Literal["meta"] = "meta"
     generator_version: str = "0.1.0"  # dataset provenance
@@ -45,7 +45,7 @@ class EvalCase(BaseModel):
     expectation: Expectation
 
 
-EvalCasesRow = Annotated[
-    EvalCasesMeta | EvalCase,
+CaseFileRow = Annotated[
+    CaseFileMeta | EvalCase,
     Field(discriminator="kind"),
 ]

@@ -19,7 +19,7 @@ from evals.generation.shipments import (
 )
 from evals.generation.templates import EvalData
 from evals.logging import get_logger
-from evals.models import EvalCase, EvalCasesMeta
+from evals.models import CaseFileMeta, EvalCase
 
 
 logger = get_logger("generator")
@@ -54,7 +54,7 @@ def generate(
     locations_by_locode = {loc.locode: loc for loc in data.locations}
 
     with open(output_path, "w") as f:
-        meta = EvalCasesMeta(
+        meta = CaseFileMeta(
             case_count=cases,
             seed=seed,
             generated_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),

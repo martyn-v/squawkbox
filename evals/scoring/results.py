@@ -1,8 +1,6 @@
-from typing import Any
-
 from pydantic import BaseModel, computed_field
 
-from evals.models import EvalCasesMeta
+from evals.models import CaseFileMeta
 from squawk.models import Action
 
 
@@ -113,13 +111,22 @@ class AggregateScore(BaseModel):
     by_action_type: dict[str, SliceScore]
 
 
-class EvalRunResults(BaseModel):
-    """The results of an evaluation run, including the overall scores and the per-case results."""
+class EvalRun(BaseModel):
+    """One evaluation run: what was tested, against which cases, with what outcome."""
 
+    # what was tested
     model: str
+    model_temperature: float
     system_prompt_hash: str
-    metadata: dict[str, Any]
-    cases_meta: EvalCasesMeta | None
+    git_sha: str  # agent/scorer code version at run time, -dirty if uncommitted
+
+    # against which cases
+    cases_path: str
+    cases_meta: CaseFileMeta | None
     cases_hash: str | None  # sha256 over canonical case JSON, dataset identity
+
+    # outcome
+    run_at: str  # UTC ISO timestamp, also the results filename stem
+    complete: bool  # False if the run aborted partway
     summary: AggregateScore
     results: list[EvalResult]

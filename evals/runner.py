@@ -4,26 +4,25 @@ import time
 from langchain_ollama import ChatOllama
 from pydantic import TypeAdapter, ValidationError
 from evals.logging import get_logger
-from evals.models import EvalCase, EvalCasesMeta, EvalCasesRow
+from evals.models import CaseFileMeta, CaseFileRow, EvalCase
 from evals.scoring import aggregate_scores, score
-from evals.scoring.results import EvalResult, EvalRunResults
+from evals.scoring.results import EvalResult, EvalRun
+from evals.utils import git_sha
 from squawk.agent import run_agent, SYSTEM_PROMPT_TEMPLATE
 import hashlib
 
 logger = get_logger("runner")
-CASE_ROW_ADAPTER = TypeAdapter(EvalCasesRow)
+CASE_FILE_ROW_ADAPTER = TypeAdapter(CaseFileRow)
 
 
 def _setup(
     model_name: str, model_temperature: float, cases_path: str, output_path: str
-) -> tuple[ChatOllama, str]:
+) -> tuple[ChatOllama, str, str]:
     # Ensure output path exists
     os.makedirs(output_path, exist_ok=True)
 
-    output_file = os.path.join(
-        output_path,
-        f"{datetime.datetime.now(datetime.timezone.utc).isoformat()}.json",
-    )
+    run_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    output_file = os.path.join(output_path, f"{run_at}.json")
 
     logger.info(
         "starting evaluation runner",
@@ -41,15 +40,15 @@ def _setup(
         client_kwargs={"timeout": 30},
     )
 
-    return model, output_file
+    return model, output_file, run_at
 
 
 def _load_cases(
     cases_path: str,
-) -> tuple[EvalCasesMeta | None, list[EvalCase], str]:
+) -> tuple[CaseFileMeta | None, list[EvalCase], str]:
     """Parse the whole case file before evaluating anything: a corrupt or
     truncated file is a dataset bug, so fail before spending model calls."""
-    meta: EvalCasesMeta | None = None
+    meta: CaseFileMeta | None = None
     cases: list[EvalCase] = []
     digest = hashlib.sha256()
 
@@ -58,11 +57,11 @@ def _load_cases(
             if not line.strip():
                 continue
             try:
-                row = CASE_ROW_ADAPTER.validate_json(line)
+                row = CASE_FILE_ROW_ADAPTER.validate_json(line)
             except ValidationError as e:
                 raise ValueError(f"corrupt case file {cases_path}:{lineno}") from e
 
-            if isinstance(row, EvalCasesMeta):
+            if isinstance(row, CaseFileMeta):
                 meta = row
             else:
                 cases.append(row)
@@ -145,12 +144,13 @@ def _write_report(
     results: list[EvalResult],
     model_name: str,
     cases_path: str,
-    cases_meta: EvalCasesMeta | None,
+    cases_meta: CaseFileMeta | None,
     cases_hash: str | None,
     model_temperature: float,
     output_file: str,
+    run_at: str,
     complete: bool = True,
-) -> EvalRunResults:
+) -> EvalRun:
     summary = aggregate_scores(results)
 
     # Calculate system prompt hash for reproducibility
@@ -158,22 +158,23 @@ def _write_report(
         SYSTEM_PROMPT_TEMPLATE.template.encode()
     ).hexdigest()
 
-    run_results = EvalRunResults(
+    run_results = EvalRun(
         model=model_name,
+        model_temperature=model_temperature,
         system_prompt_hash=system_prompt_hash,
+        git_sha=git_sha() or "unknown",
+        cases_path=cases_path,
         cases_meta=cases_meta,
         cases_hash=cases_hash,
-        metadata={
-            "cases_path": cases_path,
-            "model_temperature": model_temperature,
-            "complete": complete,
-        },
+        run_at=run_at,
+        complete=complete,
         summary=summary,
         results=results,
     )
 
     with open(output_file, "w") as f:
-        f.write(run_results.model_dump_json(indent=2))
+        # kind is the case-file discriminator; it's noise in a report
+        f.write(run_results.model_dump_json(indent=2, exclude={"cases_meta": {"kind"}}))
 
     return run_results
 
@@ -181,11 +182,13 @@ def _write_report(
 def run(
     model_name: str, model_temperature: float, cases_path: str, output_path: str
 ) -> str:
-    model, output_file = _setup(model_name, model_temperature, cases_path, output_path)
+    model, output_file, run_at = _setup(
+        model_name, model_temperature, cases_path, output_path
+    )
 
     results: list[EvalResult] = []
     complete = False
-    cases_meta: EvalCasesMeta | None = None
+    cases_meta: CaseFileMeta | None = None
     cases_hash: str | None = None
     try:
         cases_meta, cases, cases_hash = _load_cases(cases_path)
@@ -223,6 +226,7 @@ def run(
                 cases_hash,
                 model_temperature,
                 output_file,
+                run_at,
                 complete=complete,
             )
 
