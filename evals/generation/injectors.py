@@ -12,6 +12,7 @@ from squawk.models import (
     DepartureDelayEvent,
     EscalateAction,
     IncomingEvent,
+    RoutineEvent,
     Shipment,
     UpdatePropertyAction,
     NotifyAction,
@@ -36,6 +37,38 @@ class ScenarioInjector(ABC):
     @abstractmethod
     def inject(self, shipment: Shipment, rng: Random) -> InjectionResult:
         """Inject the scenario into the shipment, returning the event and expected outcome."""
+
+
+class RoutineEventInjector(ScenarioInjector):
+    """
+    Injects a routine event into a shipment, such as a status update or notification.
+    The model is expected to do nothing in response to this event.
+
+    FIXME: This is a placeholder implementation. In a real-world scenario, you would implement logic to generate a variety of routine events based on the shipment's state.
+    """
+
+    def is_applicable(self, shipment: Shipment) -> bool:
+        # Routine events are always applicable
+        return True
+
+    def inject(self, shipment: Shipment, rng: Random) -> InjectionResult:
+        # For simplicity, we'll just create a generic routine event and expectation
+
+        leg_index = rng.randint(0, len(shipment.legs) - 1)
+        eta = shipment.legs[leg_index].eta
+
+        event = RoutineEvent(
+            leg_index=leg_index,
+            eta=eta,
+        )
+        expectation = Expectation(
+            should_act=False,
+        )
+        return InjectionResult(
+            event=event,
+            expectation=expectation,
+            tags=["routine", "clean"],
+        )
 
 
 class ArrivalDelayInjector(ScenarioInjector):

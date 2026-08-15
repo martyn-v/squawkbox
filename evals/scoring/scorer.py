@@ -195,7 +195,8 @@ def _by_action_type(results: list[EvalResult]) -> dict[str, SliceScore]:
 def aggregate_scores(results: list[EvalResult]) -> AggregateScore:
     """Roll many results into overall scores plus the slices that say where to look.
 
-    Slices: by injector (fault type; injector=None cases group under "clean"),
+    Slices: by injector (fault type; legacy injector=None cases group under "clean",
+    newer datasets mark clean cases via RoutineEventInjector + the "clean" tag),
     by tag (a case appears in every one of its tags), and by action type. The
     decision matrix scores each case's act/stay-quiet call — should_act comes
     from the expectation, "acted" means the agent emitted any action at all,

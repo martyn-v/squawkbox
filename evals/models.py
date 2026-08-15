@@ -7,7 +7,7 @@ class Expectation(BaseModel):
     """What the agent is expected to do in response to an incoming event."""
 
     should_act: bool
-    actions: list[Action]
+    actions: list[Action] = []
 
 
 class EvalCase(BaseModel):
@@ -19,7 +19,7 @@ class EvalCase(BaseModel):
     generator_version: str = "0.1.0"  # dataset provenance
 
     # slicing metadata (your results table columns)
-    injector: str | None  # "arrival_delay", None = clean case
+    injector: str | None  # "arrival_delay"; clean cases come from RoutineEventInjector and carry the "clean" tag
     template_reference: str  # which lane/template
     tags: list[str] = []  # "transshipment", "underway", ...
 

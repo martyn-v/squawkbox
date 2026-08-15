@@ -87,7 +87,7 @@ The JSON report is exhaustive but not readable. `summarize` hands the whole repo
 ## Not built yet
 
 - **LLM-as-judge** for the fuzzy outputs — notification message and escalation reason quality. The action models already set those fields aside as judge material; nothing consumes them yet.
-- **Richer scenario classes** — near-misses (an ETA slip that self-corrects) and noise streams currently exist only as intent; today's clean cases are limited to fully-arrived shipments.
+- **Richer scenario classes** — near-misses (an ETA slip that self-corrects) and noise streams currently exist only as intent; today's clean cases are a single generic ETA confirmation (see the FIXME on `RoutineEventInjector`).
 - **Injector configuration** — which injectors run, and at what ratio, is currently a hardcoded list rather than run config.
 
 ## What this is not

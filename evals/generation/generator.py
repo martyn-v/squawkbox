@@ -2,7 +2,11 @@ from random import Random
 import yaml
 import os
 
-from evals.generation.injectors import ArrivalDelayInjector, DepartureDelayInjector
+from evals.generation.injectors import (
+    ArrivalDelayInjector,
+    DepartureDelayInjector,
+    RoutineEventInjector,
+)
 from evals.generation.shipments import (
     generate_shipment,
     progress_shipment,
@@ -10,13 +14,12 @@ from evals.generation.shipments import (
 )
 from evals.generation.templates import EvalData
 from evals.logging import get_logger
-from evals.models import EvalCase, Expectation
-from squawk.models import RoutineEvent
+from evals.models import EvalCase
 
 
 logger = get_logger("generator")
 
-INJECTORS = [ArrivalDelayInjector(), DepartureDelayInjector()]
+INJECTORS = [ArrivalDelayInjector(), DepartureDelayInjector(), RoutineEventInjector()]
 
 
 def load_data(path: str) -> EvalData:
@@ -66,39 +69,22 @@ def generate(
                     else None,
                 )
 
+                # Randomly select an applicable injector (RoutineEventInjector always applies, so there is always at least one) and inject an event into the shipment, generating the expected actions and tags for scoring.
                 candidates = [inj for inj in INJECTORS if inj.is_applicable(shipment)]
-
-                if candidates:
-                    # Randomly select an applicable injector and inject an event into the shipment, generating the expected actions and tags for scoring.
-                    injector = child_rng.choice(candidates)
-                    result = injector.inject(shipment, child_rng)
-                    injector_name, event, expectation, extra_tags = (
-                        injector.__class__.__name__,
-                        result.event,
-                        result.expectation,
-                        result.tags,
-                    )
-                    logger.debug(
-                        "injected event",
-                        shipment_id=shipment.id,
-                        injector=injector_name,
-                        event_type=event.__class__.__name__,
-                    )
-                else:
-                    # No applicable injectors; generate a clean case with a routine event and no expected actions. The case is tagged as "clean" for scoring purposes.
-                    injector_name, event, expectation, extra_tags = (
-                        None,
-                        RoutineEvent(
-                            leg_index=0, eta=shipment.legs[0].eta
-                        ),  # FIXME: this should calculate based on the actual shipment, same as an injector
-                        Expectation(should_act=False, actions=[]),
-                        ["clean"],
-                    )
-                    logger.debug(
-                        "no applicable injectors",
-                        shipment_id=shipment.id,
-                        event_type=event.__class__.__name__,
-                    )
+                injector = child_rng.choice(candidates)
+                result = injector.inject(shipment, child_rng)
+                injector_name, event, expectation, extra_tags = (
+                    injector.__class__.__name__,
+                    result.event,
+                    result.expectation,
+                    result.tags,
+                )
+                logger.debug(
+                    "injected event",
+                    shipment_id=shipment.id,
+                    injector=injector_name,
+                    event_type=event.__class__.__name__,
+                )
 
                 case = EvalCase(
                     case_id=f"case-{index:05d}-{variant}",
