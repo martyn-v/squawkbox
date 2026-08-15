@@ -2,7 +2,7 @@ from typing import Annotated, Any
 from typing_extensions import Literal
 from pydantic import BaseModel, Field
 
-from squawk.models.shipment import Contact
+from squawkbox.models.shipment import Contact
 
 
 class UpdatePropertyAction(BaseModel):

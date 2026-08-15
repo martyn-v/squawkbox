@@ -616,7 +616,7 @@ wheels = [
 ]
 
 [[package]]
-name = "squawk"
+name = "squawkbox"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

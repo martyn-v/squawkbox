@@ -1,7 +1,7 @@
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field
 
-from squawk.models import Action, IncomingEvent, Shipment
+from squawkbox.models import Action, IncomingEvent, Shipment
 
 
 class Expectation(BaseModel):

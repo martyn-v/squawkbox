@@ -1,7 +1,7 @@
 from pydantic import BaseModel, computed_field
 
 from evals.models import CaseFileMeta
-from squawk.models import Action
+from squawkbox.models import Action
 
 
 class NearMiss(BaseModel):

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, model_validator
 
-from squawk.models import Location, TransportMode
+from squawkbox.models import Location, TransportMode
 
 
 class TemplateLeg(BaseModel):

@@ -4,8 +4,8 @@ from random import Random
 from faker import Faker
 
 from evals.generation.templates import TemplateShipment
-from squawk.models import Contact, Event, Leg, Location, Shipment
-from squawk.models.shipment import Company
+from squawkbox.models import Contact, Event, Leg, Location, Shipment
+from squawkbox.models.shipment import Company
 
 
 def lookup_location(locode: str, locations_by_locode: dict[str, Location]) -> Location:

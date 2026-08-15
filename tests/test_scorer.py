@@ -1,7 +1,7 @@
 from evals.models import Expectation
 from evals.scoring.results import EvalResult, ScoreDiff
 from evals.scoring.scorer import aggregate_scores, score
-from squawk.models import (
+from squawkbox.models import (
     Contact,
     EscalateAction,
     NotifyAction,

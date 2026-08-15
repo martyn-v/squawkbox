@@ -6,7 +6,7 @@ DEFAULT_SUMMARIZE_TEMPERATURE = 0.2
 
 @click.group()
 def cli():
-    """Evaluate the squawk agent.
+    """Evaluate the squawkbox agent.
 
     Typical workflow: generate → run → summarize.
     """

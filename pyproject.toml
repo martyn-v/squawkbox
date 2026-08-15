@@ -1,7 +1,7 @@
 [project]
-name = "squawk"
+name = "squawkbox"
 version = "0.1.0"
-description = "Add your description here"
+description = "An evaluation harness for manage-by-exception freight agents"
 readme = "README.md"
 authors = [
     { name = "martyn-v", email = "m@rtyn.io" }
@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-squawk = "squawk:main"
+squawkbox = "squawkbox:main"
 
 [build-system]
 requires = ["uv_build>=0.12.3,<0.13.0"]

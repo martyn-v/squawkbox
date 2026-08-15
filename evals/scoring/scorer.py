@@ -10,7 +10,7 @@ from evals.scoring.results import (
     ScoreDiff,
     SliceScore,
 )
-from squawk.models import Action, NotifyAction, UpdatePropertyAction
+from squawkbox.models import Action, NotifyAction, UpdatePropertyAction
 
 
 # Comparators return the list of field mismatches between an agent action and an

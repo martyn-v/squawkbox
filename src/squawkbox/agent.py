@@ -3,8 +3,8 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.language_models import BaseChatModel
 
-from squawk.llm import default_model
-from squawk.models import AgentReply, Shipment, IncomingEvent, Action
+from squawkbox.llm import default_model
+from squawkbox.models import AgentReply, Shipment, IncomingEvent, Action
 
 SYSTEM_PROMPT_TEMPLATE = PromptTemplate(
     template="""You are a shipment exception agent. You are given the current state of a shipment and one incoming event. Decide which actions, if any, to take in response.

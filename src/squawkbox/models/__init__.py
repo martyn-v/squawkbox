@@ -1,4 +1,4 @@
-from squawk.models.shipment import (
+from squawkbox.models.shipment import (
     Contact,
     Event,
     EventType,
@@ -7,7 +7,7 @@ from squawk.models.shipment import (
     Shipment,
     TransportMode,
 )
-from squawk.models.events import (
+from squawkbox.models.events import (
     ArrivalDelayEvent,
     DepartureDelayEvent,
     IncomingEvent,
@@ -15,7 +15,7 @@ from squawk.models.events import (
     RoutineEvent,
     CustomsHoldEvent,
 )
-from squawk.models.actions import (
+from squawkbox.models.actions import (
     Action,
     AgentReply,
     EscalateAction,

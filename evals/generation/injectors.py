@@ -6,7 +6,7 @@ from faker import Faker
 from pydantic import BaseModel
 
 from evals.models import Expectation
-from squawk.models import (
+from squawkbox.models import (
     Action,
     ArrivalDelayEvent,
     Contact,
@@ -19,7 +19,7 @@ from squawk.models import (
     UpdatePropertyAction,
     NotifyAction,
 )
-from squawk.models.events import CustomsHoldEvent
+from squawkbox.models.events import CustomsHoldEvent
 
 
 class InjectionResult(BaseModel):

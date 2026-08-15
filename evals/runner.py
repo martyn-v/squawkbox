@@ -8,7 +8,7 @@ from evals.models import CaseFileMeta, CaseFileRow, EvalCase
 from evals.scoring import aggregate_scores, score
 from evals.scoring.results import EvalResult, EvalRun
 from evals.utils import git_sha
-from squawk.agent import run_agent, SYSTEM_PROMPT_TEMPLATE
+from squawkbox.agent import run_agent, SYSTEM_PROMPT_TEMPLATE
 import hashlib
 
 logger = get_logger("runner")

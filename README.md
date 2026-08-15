@@ -9,7 +9,7 @@ Squawkbox is an evaluation harness for manage-by-exception freight agents. It an
 The project has three parts:
 
 1. **A case generator** (`evals/generation/`) that produces synthetic shipments from lane templates, progresses each one through its lifecycle to a random point, then injects a fault. Because cases are generated from known lane data and fault injectors, every case ships with its own answer key. No hand-labeling.
-2. **An agent under test** (`src/squawk/`) that receives the shipment state plus the incoming event in a single prompt and replies with zero or more actions — or an empty list, meaning "nothing to do here".
+2. **An agent under test** (`src/squawkbox/`) that receives the shipment state plus the incoming event in a single prompt and replies with zero or more actions — or an empty list, meaning "nothing to do here".
 3. **An eval runner** (`evals/runner.py` + `evals/scoring/`) that runs the agent over a case file and scores its actions deterministically against the answer key.
 
 ## Commands
@@ -28,7 +28,7 @@ uv run -m evals summarize   # LLM-written markdown summary of a run report, pick
 ## Layout
 
 ```
-src/squawk/          the agent under test
+src/squawkbox/          the agent under test
   models/            domain models: shipment (Shipment, Leg, Event), events (incoming), actions
   agent.py           prompt construction + one LLM call, JSON reply parsed into actions
   llm.py             default Ollama model config
@@ -62,7 +62,7 @@ The expected reply for a delay: update the affected dates, notify the customer c
 
 ## Events and injectors
 
-Two distinct kinds of "event" exist. **Milestone events** (`booked`, `gate_in`, `departed`, `arrived`, `delivered`) are the shipment's own append-only history, written by the generator as it progresses the timeline. **Incoming events** (`src/squawk/models/events.py`) are the single stimulus the agent must react to; each is produced by exactly one injector.
+Two distinct kinds of "event" exist. **Milestone events** (`booked`, `gate_in`, `departed`, `arrived`, `delivered`) are the shipment's own append-only history, written by the generator as it progresses the timeline. **Incoming events** (`src/squawkbox/models/events.py`) are the single stimulus the agent must react to; each is produced by exactly one injector.
 
 ### Incoming events
 
@@ -104,7 +104,7 @@ Candidates that would each test a decision shape the current events don't. Per t
 
 ## Actions
 
-The vocabulary the agent replies with (`src/squawk/models/actions.py`). All payload fields are diffed by the scorer except those marked judge material.
+The vocabulary the agent replies with (`src/squawkbox/models/actions.py`). All payload fields are diffed by the scorer except those marked judge material.
 
 ### Current actions
 

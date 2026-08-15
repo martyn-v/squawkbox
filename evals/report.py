@@ -12,8 +12,8 @@ MAX_SAMPLED_FAILURES = 25
 
 SYSTEM_PROMPT_TEMPLATE = PromptTemplate(
     template="""
-    You are an evaluation report generator for Squawk, an agentic application that manages shipment exceptions.
-    Squawk is given a set of cases: a shipment at a certain state and an incoming event. It must decide which actions, if any, to take in response. 
+    You are an evaluation report generator for Squawkbox, an agentic application that manages shipment exceptions.
+    Squawkbox is given a set of cases: a shipment at a certain state and an incoming event. It must decide which actions, if any, to take in response. 
     You are given a JSON file containing the results of an evaluation run, which includes the model's performance on various test cases. 
     Your task is to generate a concise and informative report summarizing the evaluation results.
 
