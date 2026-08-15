@@ -18,7 +18,7 @@ def lookup_location(locode: str, locations_by_locode: dict[str, Location]) -> Lo
 
 
 def generate_shipment(
-    template_index: int,
+    case_index: int,
     template: TemplateShipment,
     rng: Random,
     fake: Faker,
@@ -65,7 +65,7 @@ def generate_shipment(
         legs.append(leg)
 
     return Shipment(
-        id=f"SHP-{template_index + 1:05d}",
+        id=f"SHP-{case_index + 1:05d}",
         reference=fake.bothify("??######").upper(),
         booked_at=anchor_date,
         owner=Contact(name=fake.name(), email=fake.email()),

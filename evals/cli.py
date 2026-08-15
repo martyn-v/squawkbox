@@ -15,7 +15,7 @@ def cli():
     "--seed", default=42, help="Random seed for reproducibility.", show_default=True
 )
 @click.option(
-    "--variants", default=10, help="Number of variants to generate.", show_default=True
+    "--cases", default=30, help="Number of cases to generate.", show_default=True
 )
 @click.option(
     "--data",
@@ -31,11 +31,11 @@ def cli():
     help="Path to the output file.",
     show_default=True,
 )
-def generate(seed: int, variants: int, data: str, output: str):
+def generate(seed: int, cases: int, data: str, output: str):
     """Generate evaluation cases."""
     from evals.generation import generate
 
-    generate(seed, variants, data, output)
+    generate(seed, cases, data, output)
 
 
 @cli.command()

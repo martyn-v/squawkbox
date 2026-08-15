@@ -39,7 +39,7 @@ def _load_data(path: str) -> EvalData:
 
 def generate(
     seed: int,
-    variants: int,
+    cases: int,
     data_path: str,
     output_path: str,
 ):
@@ -47,67 +47,63 @@ def generate(
     if output_dir := os.path.dirname(output_path):
         os.makedirs(output_dir, exist_ok=True)
 
-    logger.info("starting generator", seed=seed, variants=variants)
+    logger.info("starting generator", seed=seed, cases=cases)
     data = _load_data(data_path)
     locations_by_locode = {loc.locode: loc for loc in data.locations}
 
-    counter = 0
     with open(output_path, "w") as f:
-        for variant in range(variants):
-            for index, template in enumerate(data.templates):
-                child_seed = f"{seed}-{index}-{variant}"
-                child_rng = Random(child_seed)
-                # Created at a fixed point so the draw from child_rng doesn't shift as the pipeline evolves
-                child_fake = make_faker(child_rng)
+        for index in range(cases):
+            template = data.templates[index % len(data.templates)]
+            child_seed = f"{seed}-{index}"
+            child_rng = Random(child_seed)
+            # Created at a fixed point so the draw from child_rng doesn't shift as the pipeline evolves
+            child_fake = make_faker(child_rng)
 
-                # Generate a clean shipment
-                shipment = generate_shipment(
-                    index, template, child_rng, child_fake, locations_by_locode
-                )
-                logger.debug(
-                    "generated shipment",
-                    shipment_id=shipment.id,
-                    template=template.reference,
-                )
+            # Generate a clean shipment
+            shipment = generate_shipment(
+                index, template, child_rng, child_fake, locations_by_locode
+            )
+            logger.debug(
+                "generated shipment",
+                shipment_id=shipment.id,
+                template=template.reference,
+            )
 
-                # Progress the shipment through its lifecycle to a random milestone, generating events and updating leg dates accordingly.
-                shipment = progress_shipment(shipment, child_rng)
-                logger.debug(
-                    "progressed shipment",
-                    shipment_id=shipment.id,
-                    last_event=shipment.events[-1].event_type
-                    if shipment.events
-                    else None,
-                )
+            # Progress the shipment through its lifecycle to a random milestone, generating events and updating leg dates accordingly.
+            shipment = progress_shipment(shipment, child_rng)
+            logger.debug(
+                "progressed shipment",
+                shipment_id=shipment.id,
+                last_event=shipment.events[-1].event_type if shipment.events else None,
+            )
 
-                # Randomly select an applicable injector (RoutineEventInjector always applies, so there is always at least one) and inject an event into the shipment, generating the expected actions and tags for scoring.
-                candidates = [inj for inj in INJECTORS if inj.is_applicable(shipment)]
-                injector = child_rng.choice(candidates)
-                result = injector.inject(shipment, child_rng, child_fake)
-                injector_name, event, expectation, extra_tags = (
-                    injector.__class__.__name__,
-                    result.event,
-                    result.expectation,
-                    result.tags,
-                )
-                logger.debug(
-                    "injected event",
-                    shipment_id=shipment.id,
-                    injector=injector_name,
-                    event_type=event.__class__.__name__,
-                )
+            # Randomly select an applicable injector (RoutineEventInjector always applies, so there is always at least one) and inject an event into the shipment, generating the expected actions and tags for scoring.
+            candidates = [inj for inj in INJECTORS if inj.is_applicable(shipment)]
+            injector = child_rng.choice(candidates)
+            result = injector.inject(shipment, child_rng, child_fake)
+            injector_name, event, expectation, extra_tags = (
+                injector.__class__.__name__,
+                result.event,
+                result.expectation,
+                result.tags,
+            )
+            logger.debug(
+                "injected event",
+                shipment_id=shipment.id,
+                injector=injector_name,
+                event_type=event.__class__.__name__,
+            )
 
-                case = EvalCase(
-                    case_id=f"case-{index:05d}-{variant}",
-                    seed=child_seed,
-                    injector=injector_name,
-                    template_reference=template.reference,
-                    tags=shipment_tags(shipment) + extra_tags,
-                    shipment=shipment,
-                    incoming_event=event,
-                    expectation=expectation,
-                )
-                f.write(case.model_dump_json() + "\n")
-                counter += 1
+            case = EvalCase(
+                case_id=f"case-{index:05d}",
+                seed=child_seed,
+                injector=injector_name,
+                template_reference=template.reference,
+                tags=shipment_tags(shipment) + extra_tags,
+                shipment=shipment,
+                incoming_event=event,
+                expectation=expectation,
+            )
+            f.write(case.model_dump_json() + "\n")
 
-    logger.info("finished generator", total_cases=counter, output_path=output_path)
+    logger.info("finished generator", total_cases=cases, output_path=output_path)
