@@ -101,12 +101,21 @@ def run(model: str, temperature: float, cases: str, output: str, summarize: bool
 @click.option(
     "--evals_file",
     type=click.Path(exists=True, dir_okay=False),
-    help="Path to the evaluation results file.",
+    default=None,
+    help="Path to the evaluation results file. Omit to pick interactively.",
     show_default=True,
 )
-def summarize(model: str, temperature: float, evals_file: str):
+def summarize(model: str, temperature: float, evals_file: str | None):
     """Use LLM to summarize evaluation results to a markdown file."""
     from evals.report import summarize_run_results
+
+    if evals_file is None:
+        from evals.picker import pick_results_files
+
+        picked = pick_results_files()
+        if not picked:
+            raise click.UsageError("no results file selected")
+        evals_file = picked[0]
 
     summarize_run_results(model, temperature, evals_file)
 
