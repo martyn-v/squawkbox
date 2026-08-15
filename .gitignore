@@ -10,5 +10,3 @@ wheels/
 .venv
 evals/*.jsonl
 
-# Local planning notes
-ROADMAP.md
