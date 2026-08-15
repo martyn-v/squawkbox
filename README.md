@@ -20,9 +20,11 @@ The eval tooling is a click CLI invoked as a module. Running the agent requires 
 uv run -m evals --help      # list available commands
 uv run -m evals generate    # generate cases into evals/cases/cases.jsonl
 uv run -m evals run         # run the agent over the cases, write a scored report to evals/results/
+uv run -m evals summarize --evals_file evals/results/<run>.json
+                            # LLM-written markdown summary of an existing run report
 ```
 
-`generate` takes `--seed` (default 42) and `--variants` (default 10, cases per lane template). `run` takes `--model` (default `gemma4:31b`) and `--temperature` (default 0.5). Both accept path overrides; see `--help` on each.
+`generate` takes `--seed` (default 42) and `--variants` (default 10, cases per lane template). `run` takes `--model` (default `gemma4:31b`) and `--temperature` (default 0.5), plus `--summarize` to write the markdown summary immediately after the run. `summarize` takes its own `--model` and `--temperature` (default 0.2 — summarization wants less creativity than the agent under test). All accept path overrides; see `--help` on each.
 
 ## Layout
 
@@ -36,6 +38,7 @@ evals/
   generation/        templates, shipment synthesis, fault injectors, generate loop
   scoring/           result models, action matching, aggregation
   runner.py          run loop: agent per case, score, aggregate, write report
+  report.py          LLM-written markdown summary of a run report
   cli.py             click entry points
   data/data.yaml     lane templates and locations (the generator's input)
   cases/             generated cases (jsonl, git-ignored)
@@ -76,6 +79,10 @@ A case passes only when all three failure buckets are empty. The report aggregat
 - **Per-case latency**
 
 Each run writes a timestamped JSON report to `evals/results/` containing the summary plus every per-case diff.
+
+## Run summaries
+
+The JSON report is exhaustive but not readable. `summarize` hands the whole report to an LLM, which writes a stakeholder-facing markdown summary next to it (`<run>.md`): headline metrics, notable failures with concrete examples, and recommendations. This is presentation only — all numbers come from the deterministic scorer, and the LLM has no part in deciding whether a case passed. It is also not the planned LLM judge (see below), which would score individual message quality rather than narrate a finished run.
 
 ## Not built yet
 
