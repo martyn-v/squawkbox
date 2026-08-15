@@ -1,5 +1,5 @@
 templates:
-  - reference: "1"
+  - reference: "NLRTM-SGSIN-direct"
     mode: "ocean"
     place_of_receipt: "NLRTM"
     place_of_delivery: "SGSIN"
@@ -9,7 +9,7 @@ templates:
         port_of_loading: "NLRTM"
         port_of_discharge: "SGSIN"
         transit_time: [18, 24]
-  - reference: "2"
+  - reference: "NLRTM-COCTG-via-PAMIT"
     mode: "ocean"
     place_of_receipt: "NLRTM"
     place_of_delivery: "COCTG"
@@ -24,7 +24,7 @@ templates:
         port_of_loading: "PAMIT"
         port_of_discharge: "COCTG"
         transit_time: [4, 6]
-  - reference: "3"
+  - reference: "COBOG-USMIA-air"
     mode: "air"
     place_of_receipt: "COBOG"
     place_of_delivery: "USMIA"
@@ -33,6 +33,96 @@ templates:
         dwell_time: null
         port_of_loading: "COBOG"
         port_of_discharge: "USMIA"
+        transit_time: [0, 1]
+  - reference: "CNSHA-USLAX-direct"
+    mode: "ocean"
+    place_of_receipt: "CNSHA"
+    place_of_delivery: "USLAX"
+    legs:
+      - mode: "ocean"
+        dwell_time: null
+        port_of_loading: "CNSHA"
+        port_of_discharge: "USLAX"
+        transit_time: [14, 20]
+  - reference: "CNYTN-DEHAM-via-SGSIN"
+    mode: "ocean"
+    place_of_receipt: "CNYTN"
+    place_of_delivery: "DEHAM"
+    legs:
+      - mode: "ocean"
+        dwell_time: null
+        port_of_loading: "CNYTN"
+        port_of_discharge: "SGSIN"
+        transit_time: [4, 6]
+      - mode: "ocean"
+        dwell_time: [2, 5]
+        port_of_loading: "SGSIN"
+        port_of_discharge: "DEHAM"
+        transit_time: [22, 28]
+  - reference: "BRSSZ-NLRTM-direct"
+    mode: "ocean"
+    place_of_receipt: "BRSSZ"
+    place_of_delivery: "NLRTM"
+    legs:
+      - mode: "ocean"
+        dwell_time: null
+        port_of_loading: "BRSSZ"
+        port_of_discharge: "NLRTM"
+        transit_time: [14, 18]
+  - reference: "VNHPH-SEGOT-via-SGSIN-NLRTM"
+    mode: "ocean"
+    place_of_receipt: "VNHPH"
+    place_of_delivery: "SEGOT"
+    legs:
+      - mode: "ocean"
+        dwell_time: null
+        port_of_loading: "VNHPH"
+        port_of_discharge: "SGSIN"
+        transit_time: [3, 5]
+      - mode: "ocean"
+        dwell_time: [2, 4]
+        port_of_loading: "SGSIN"
+        port_of_discharge: "NLRTM"
+        transit_time: [20, 26]
+      - mode: "ocean"
+        dwell_time: [1, 3]
+        port_of_loading: "NLRTM"
+        port_of_discharge: "SEGOT"
+        transit_time: [2, 3]
+  - reference: "KRPUS-JPTYO-direct"
+    mode: "ocean"
+    place_of_receipt: "KRPUS"
+    place_of_delivery: "JPTYO"
+    legs:
+      - mode: "ocean"
+        dwell_time: null
+        port_of_loading: "KRPUS"
+        port_of_discharge: "JPTYO"
+        transit_time: [2, 3]
+  - reference: "DEFRA-HKHKG-air"
+    mode: "air"
+    place_of_receipt: "DEFRA"
+    place_of_delivery: "HKHKG"
+    legs:
+      - mode: "air"
+        dwell_time: null
+        port_of_loading: "DEFRA"
+        port_of_discharge: "HKHKG"
+        transit_time: [0, 1]
+  - reference: "NLAMS-KENBO-via-AEDXB-air"
+    mode: "air"
+    place_of_receipt: "NLAMS"
+    place_of_delivery: "KENBO"
+    legs:
+      - mode: "air"
+        dwell_time: null
+        port_of_loading: "NLAMS"
+        port_of_discharge: "AEDXB"
+        transit_time: [0, 1]
+      - mode: "air"
+        dwell_time: [0, 2]
+        port_of_loading: "AEDXB"
+        port_of_discharge: "KENBO"
         transit_time: [0, 1]
 
 locations:
@@ -48,3 +138,31 @@ locations:
     name: "Bogota"
   - locode: "USMIA"
     name: "Miami"
+  - locode: "CNSHA"
+    name: "Shanghai"
+  - locode: "USLAX"
+    name: "Los Angeles"
+  - locode: "CNYTN"
+    name: "Yantian"
+  - locode: "DEHAM"
+    name: "Hamburg"
+  - locode: "BRSSZ"
+    name: "Santos"
+  - locode: "VNHPH"
+    name: "Haiphong"
+  - locode: "SEGOT"
+    name: "Gothenburg"
+  - locode: "KRPUS"
+    name: "Busan"
+  - locode: "JPTYO"
+    name: "Tokyo"
+  - locode: "DEFRA"
+    name: "Frankfurt"
+  - locode: "HKHKG"
+    name: "Hong Kong"
+  - locode: "NLAMS"
+    name: "Amsterdam"
+  - locode: "AEDXB"
+    name: "Dubai"
+  - locode: "KENBO"
+    name: "Nairobi"
