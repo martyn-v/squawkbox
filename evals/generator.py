@@ -195,23 +195,25 @@ def shipment_tags(shipment: Shipment) -> list[str]:
 
 
 INJECTORS = [ArrivalDelayInjector(), DepartureDelayInjector()]
-DEFAULT_SEED = 42
-VARIANTS_PER_TEMPLATE = 2
-DEFAULT_DATA_PATH = "evals/artifacts/data.yaml"
-DEFAULT_OUTPUT_PATH = "evals/fixtures/cases.jsonl"
 
 
-def generate():
+def generate(
+    seed: int,
+    variants: int,
+    data_path: str,
+    output_path: str,
+):
     # Ensure output path exists
-    os.makedirs(os.path.dirname(DEFAULT_OUTPUT_PATH), exist_ok=True)
+    if output_dir := os.path.dirname(output_path):
+        os.makedirs(output_dir, exist_ok=True)
 
-    logger.info("starting generator", seed=DEFAULT_SEED, variants=VARIANTS_PER_TEMPLATE)
-    data = load_data(DEFAULT_DATA_PATH)
+    logger.info("starting generator", seed=seed, variants=variants)
+    data = load_data(data_path)
     locations_by_locode = {loc.locode: loc for loc in data.locations}
-    seed = DEFAULT_SEED
+
     counter = 0
-    with open(DEFAULT_OUTPUT_PATH, "w") as f:
-        for variant in range(VARIANTS_PER_TEMPLATE):
+    with open(output_path, "w") as f:
+        for variant in range(variants):
             for index, template in enumerate(data.templates):
                 child_seed = f"{seed}-{index}-{variant}"
                 child_rng = Random(child_seed)
@@ -283,10 +285,4 @@ def generate():
                 f.write(case.model_dump_json() + "\n")
                 counter += 1
 
-    logger.info(
-        "finished generator", total_cases=counter, output_path=DEFAULT_OUTPUT_PATH
-    )
-
-
-if __name__ == "__main__":
-    generate()
+    logger.info("finished generator", total_cases=counter, output_path=output_path)

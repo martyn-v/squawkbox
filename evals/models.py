@@ -1,3 +1,4 @@
+from typing import Any
 from pydantic import BaseModel, computed_field, model_validator
 
 from squawk.models import Action, IncomingEvent, Location, Shipment, TransportMode
@@ -186,6 +187,6 @@ class EvalRunResults(BaseModel):
     """The results of an evaluation run, including the overall scores and the per-case results."""
 
     model: str
-    metadata: dict[str, str]
+    metadata: dict[str, Any]
     summary: AggregateScore
     results: list[EvalResult]

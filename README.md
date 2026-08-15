@@ -12,6 +12,15 @@ The project has three parts:
 2. **An agent under test** that receives the shipment state plus the incoming mutation and responds with zero or more follow-up mutations (update ETA, notify a party, flag a risk) or explicitly does nothing.
 3. **An eval runner** that scores agent output deterministically against the answer key, and uses an LLM judge only for the genuinely fuzzy part: the quality of any human-facing message the agent drafts.
 
+## Commands
+
+The eval tooling is a click CLI invoked as a module:
+
+```sh
+uv run -m evals --help      # list available commands
+uv run -m evals generate    # generate evaluation cases into evals/fixtures/
+```
+
 ## The core model
 
 Everything is a mutation against a shipment.

@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
+    "click>=8.4.2",
     "faker>=40.36.0",
     "langchain-ollama>=1.1.0",
     "langgraph>=1.2.11",

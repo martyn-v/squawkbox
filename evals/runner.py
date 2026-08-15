@@ -11,37 +11,33 @@ from squawk.agent import run_agent
 logger = get_logger("runner")
 
 
-DEFAULT_MODEL_NAME = "gemma4:31b"
-DEFAULT_MODEL_TEMP = 0.5
-DEFAULT_CASES_PATH = "evals/fixtures/cases.jsonl"
-DEFAULT_OUTPUT_PATH = "evals/results/"
-
-
-def run():
+def run(model_name: str, model_temperature: float, cases_path: str, output_path: str):
     # Ensure output path exists
-    os.makedirs(DEFAULT_OUTPUT_PATH, exist_ok=True)
+    os.makedirs(output_path, exist_ok=True)
 
     output_file = os.path.join(
-        DEFAULT_OUTPUT_PATH,
+        output_path,
         f"{datetime.datetime.now(datetime.timezone.utc).isoformat()}.json",
     )
 
     logger.info(
         "starting evaluation runner",
-        model_name=DEFAULT_MODEL_NAME,
-        cases_path=DEFAULT_CASES_PATH,
+        model_name=model_name,
+        model_temperature=model_temperature,
+        cases_path=cases_path,
+        output_path=output_file,
     )
 
     model = ChatOllama(
-        model=DEFAULT_MODEL_NAME,
-        temperature=DEFAULT_MODEL_TEMP,
+        model=model_name,
+        temperature=model_temperature,
         format="json",
         reasoning=False,
     )
 
     results: list[EvalResult] = []
 
-    for line in open(DEFAULT_CASES_PATH):
+    for line in open(cases_path, "r"):
         case = EvalCase.model_validate_json(line)
         logger.debug(
             "evaluating case",
@@ -76,7 +72,7 @@ def run():
         results.append(
             EvalResult(
                 case_id=case.case_id,
-                model_name=DEFAULT_MODEL_NAME,
+                model_name=model_name,
                 injector=case.injector,
                 tags=case.tags,
                 should_act=case.expectation.should_act,
@@ -90,8 +86,8 @@ def run():
     summary = aggregate_scores(results)
 
     run_results = EvalRunResults(
-        model=DEFAULT_MODEL_NAME,
-        metadata={"cases_path": DEFAULT_CASES_PATH},
+        model=model_name,
+        metadata={"cases_path": cases_path, "model_temperature": model_temperature},
         summary=summary,
         results=results,
     )
@@ -101,14 +97,10 @@ def run():
 
     logger.info(
         "finished evaluation runner",
-        model_name=DEFAULT_MODEL_NAME,
-        cases_path=DEFAULT_CASES_PATH,
+        model_name=model_name,
+        cases_path=cases_path,
         output_path=output_file,
         total_cases=len(results),
         precision=summary.overall.precision,
         recall=summary.overall.recall,
     )
-
-
-if __name__ == "__main__":
-    run()
