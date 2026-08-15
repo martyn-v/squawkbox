@@ -4,56 +4,84 @@ An agent that watches shipment state changes and squawks when action is needed.
 
 ## What this is
 
-Squawkbox is an evaluation harness for manage-by-exception freight agents. It answers one question: given a shipment's current state and an incoming mutation, does an LLM agent correctly decide whether to act, and does it pick the right actions?
+Squawkbox is an evaluation harness for manage-by-exception freight agents. It answers one question: given a shipment's current state and an incoming event, does an LLM agent correctly decide whether to act, and does it pick the right actions?
 
 The project has three parts:
 
-1. **A scenario generator** that produces synthetic shipments with full Event histories, then applies a mutation. Because scenarios are generated from known lane data and fault injectors, every test case ships with its own answer key. No hand-labeling, ever.
-2. **An agent under test** that receives the shipment state plus the incoming mutation and responds with zero or more follow-up mutations (update ETA, notify a party, flag a risk) or explicitly does nothing.
-3. **An eval runner** that scores agent output deterministically against the answer key, and uses an LLM judge only for the genuinely fuzzy part: the quality of any human-facing message the agent drafts.
+1. **A case generator** (`evals/generation/`) that produces synthetic shipments from lane templates, progresses each one through its lifecycle to a random point, then injects a fault. Because cases are generated from known lane data and fault injectors, every case ships with its own answer key. No hand-labeling.
+2. **An agent under test** (`src/squawk/`) that receives the shipment state plus the incoming event in a single prompt and replies with zero or more actions — or an empty list, meaning "nothing to do here".
+3. **An eval runner** (`evals/runner.py` + `evals/scoring/`) that runs the agent over a case file and scores its actions deterministically against the answer key.
 
 ## Commands
 
-The eval tooling is a click CLI invoked as a module:
+The eval tooling is a click CLI invoked as a module. Running the agent requires a local [Ollama](https://ollama.com) instance.
 
 ```sh
 uv run -m evals --help      # list available commands
-uv run -m evals generate    # generate evaluation cases into evals/cases/
+uv run -m evals generate    # generate cases into evals/cases/cases.jsonl
+uv run -m evals run         # run the agent over the cases, write a scored report to evals/results/
+```
+
+`generate` takes `--seed` (default 42) and `--variants` (default 10, cases per lane template). `run` takes `--model` (default `gemma4:31b`) and `--temperature` (default 0.5). Both accept path overrides; see `--help` on each.
+
+## Layout
+
+```
+src/squawk/          the agent under test
+  models.py          domain models: Shipment, Leg, Event, incoming events, actions
+  agent.py           prompt construction + one LLM call, JSON reply parsed into actions
+  llm.py             default Ollama model config
+evals/
+  models.py          the case contract: EvalCase, Expectation
+  generation/        templates, shipment synthesis, fault injectors, generate loop
+  scoring/           result models, action matching, aggregation
+  runner.py          run loop: agent per case, score, aggregate, write report
+  cli.py             click entry points
+  data/data.yaml     lane templates and locations (the generator's input)
+  cases/             generated cases (jsonl, git-ignored)
+  results/           timestamped run reports (json)
 ```
 
 ## The core model
 
-Everything is a mutation against a shipment.
+- A **shipment** is a state object (contacts, locations, one or more legs with ETD/ATD/ETA/ATA) plus an append-only list of events (`booked`, `gate_in`, `departed`, `arrived`, `delivered`) and a `current_time`.
+- An **incoming event** is one of `arrival_delay`, `departure_delay`, or the routine `eta_confirmed`. The event describes what happened; it is *not* pre-applied to the shipment. Reconciling state is the agent's job.
+- The **agent's reply** is a list of actions:
+  - `update_property` — correct a field, addressed by path (e.g. `legs[0].eta`)
+  - `notify` — inform stakeholders (the message text is reserved for a future LLM judge, never diffed)
+  - `escalate` — hand over to a human operator (likewise, the reason text is judge material)
 
-- A shipment is a state object plus an append-only list of Events.
-- An incoming mutation is either an appended Event (vessel departed, container gated out) or a direct property change (ETA revised, consignee updated). Incoming mutations are already applied when the agent sees them. The agent reacts to what happened; it is not a gatekeeper.
-- The agent's response is itself a set of mutations. Scoring applies the agent's mutations and deep-diffs the resulting state against the expected state.
+The expected reply for a delay: update the affected dates, notify the customer contact, and escalate when a later leg puts a connection at risk. For a routine confirmation: do nothing.
 
-This symmetry keeps the test format uniform: state in, mutations out, diff to score.
+## How cases are generated
 
-## What gets measured
+- **Lanes live in data, not code.** `evals/data/data.yaml` defines lane templates (currently Rotterdam→Singapore direct ocean, Rotterdam→Cartagena via Panama transshipment, Bogotá→Miami air) with per-leg transit-time and dwell-time bounds, plus the location list. Parties and references come from Faker.
+- **Everything is seeded.** Each case gets a child seed (`seed-template-variant`) recorded on the case, so any single case can be regenerated exactly.
+- **Timelines are derived, not authored.** Leg dates are drawn within the template's bounds, then the shipment is progressed through its milestone sequence (booking, gate-in, per-leg departure/arrival, delivery) to a random point. That determines what has actually happened when the incoming event lands.
+- **Faults come from injectors.** An injector is a class that says whether it applies to a shipment and, if chosen, produces the event *plus* the expected actions and tags. Current injectors: arrival delay (on an underway leg) and departure delay (on a not-yet-departed leg). When no injector applies — the shipment already arrived everywhere — the case gets a routine `eta_confirmed` event and an empty expectation: the agent must stay quiet.
+- **Cases carry slicing metadata.** Tags like `direct`/`transshipment`, `pre_departure`/`underway`/`arrived`, `final_leg`/`connection_risk`, and `clean` let the report break results down by scenario shape.
 
-**Deterministic (runs on every commit):**
+## How scoring works
 
-- Intervention precision and recall: did the agent act when it should, stay quiet when it shouldn't
-- Action correctness: do the agent's mutations match the expected state change
-- False-alarm rate on clean and near-miss scenarios, because a noisy agent gets ignored by ops staff
+Scoring is a deterministic diff between the agent's action list and the expected one, with one-to-one matching:
 
-**LLM-as-judge (fuzzy outputs only):**
+1. **Exact pass** — agent actions claim expected actions they match completely.
+2. **Near-miss pass** — leftover agent actions pair with unclaimed expectations of the same type (a notify to the wrong recipient, an ETA moved to the wrong date), recording human-readable field mismatches.
+3. Whatever remains is **extra** (agent did it, nobody asked — false positive) or **missing** (expected, never done — false negative).
 
-- Clarity and appropriateness of drafted notifications
-- Whether the agent's stated reasoning cites the events that actually matter
+A case passes only when all three failure buckets are empty. The report aggregates:
 
-Judge calibration uses synthetic contrast pairs: deliberately degraded message variants that the judge must rank below clean ones. No human labels required.
+- **Precision and recall**, micro-averaged overall and per slice (by injector, by tag, by action type)
+- **A decision matrix** for the act/stay-quiet call itself — including the false-alarm rate on clean cases, because a noisy agent gets ignored by ops staff
+- **Per-case latency**
 
-## How scenarios are generated
+Each run writes a timestamped JSON report to `evals/results/` containing the summary plus every per-case diff.
 
-- **Reference data lives in data files, not code.** A curated set of real UN/LOCODE ports, plausible carriers, and Faker-generated parties.
-- **Lanes, not random port pairs.** Lanes are defined in data with origin, destination, optional transshipment, and transit-time bounds. Randomness is seeded and lives inside lane bounds, so scenarios look varied but stay reproducible.
-- **Timelines are derived, not authored.** A per-shipment-type template (booking, gate-in, departure, transshipment, arrival, gate-out) combined with lane transit times produces the clean Event sequence. The same derivation logic serves as the reference implementation that computes answer keys.
-- **Faults are injected by choice, not chance.** Each fault injector is a plugin that takes a clean shipment and returns a mutated event plus the expected follow-up actions. A run config selects which injectors apply and at what ratio. The injected fault and expected outcome are recorded alongside the scenario.
+## Not built yet
 
-Interesting scenario classes include subtle exceptions (a delay on a transshipment leg that breaks a tight connection), near-misses (an ETA slip that self-corrects), and pure noise streams that test the agent's ability to do nothing.
+- **LLM-as-judge** for the fuzzy outputs — notification message and escalation reason quality. The action models already set those fields aside as judge material; nothing consumes them yet.
+- **Richer scenario classes** — near-misses (an ETA slip that self-corrects) and noise streams currently exist only as intent; today's clean cases are limited to fully-arrived shipments.
+- **Injector configuration** — which injectors run, and at what ratio, is currently a hardcoded list rather than run config.
 
 ## What this is not
 

@@ -11,7 +11,9 @@ from squawk.agent import run_agent
 logger = get_logger("runner")
 
 
-def run(model_name: str, model_temperature: float, cases_path: str, output_path: str):
+def run(
+    model_name: str, model_temperature: float, cases_path: str, output_path: str
+) -> str:
     # Ensure output path exists
     os.makedirs(output_path, exist_ok=True)
 
@@ -104,3 +106,5 @@ def run(model_name: str, model_temperature: float, cases_path: str, output_path:
         precision=summary.overall.precision,
         recall=summary.overall.recall,
     )
+
+    return output_file
