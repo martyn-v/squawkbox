@@ -27,6 +27,12 @@ class Leg(BaseModel):
     ata: date | None
 
 
+class Company(BaseModel):
+    name: str
+    address: str
+    contact: Contact
+
+
 class Contact(BaseModel):
     # Frozen so contacts hash by value
     model_config = ConfigDict(frozen=True)
@@ -40,7 +46,7 @@ class Shipment(BaseModel):
     reference: str
     booked_at: date
     owner: Contact
-    customer_contact: Contact
+    customer: Company
     transport_mode: TransportMode
     place_of_receipt: Location
     port_of_loading: Location

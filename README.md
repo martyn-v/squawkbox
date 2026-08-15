@@ -29,7 +29,7 @@ uv run -m evals summarize   # LLM-written markdown summary of a run report, pick
 
 ```
 src/squawk/          the agent under test
-  models.py          domain models: Shipment, Leg, Event, incoming events, actions
+  models/            domain models: shipment (Shipment, Leg, Event), events (incoming), actions
   agent.py           prompt construction + one LLM call, JSON reply parsed into actions
   llm.py             default Ollama model config
 evals/
@@ -48,10 +48,7 @@ evals/
 
 - A **shipment** is a state object (contacts, locations, one or more legs with ETD/ATD/ETA/ATA) plus an append-only list of events (`booked`, `gate_in`, `departed`, `arrived`, `delivered`) and a `current_time`.
 - An **incoming event** is one of the event types listed under [Events and injectors](#events-and-injectors). The event describes what happened; it is *not* pre-applied to the shipment. Reconciling state is the agent's job.
-- The **agent's reply** is a list of actions:
-  - `update_property` — correct a field, addressed by path (e.g. `legs[0].eta`)
-  - `notify` — inform stakeholders (the message text is reserved for a future LLM judge, never diffed)
-  - `escalate` — hand over to a human operator (likewise, the reason text is judge material)
+- The **agent's reply** is a list of zero or more actions, cataloged under [Actions](#actions).
 
 The expected reply for a delay: update the affected dates, notify the customer contact, and escalate when a later leg puts a connection at risk. For a routine confirmation: do nothing.
 
@@ -104,6 +101,31 @@ Candidates that would each test a decision shape the current events don't. Per t
 | `booking_cancelled` | Carrier cancels the booking outright | Pure escalation — no property update can express this state |
 | `port_congestion_advisory` | Advisory that the destination port is congested; no dates changed yet | Staying quiet on ambient noise that *sounds* actionable — a richer clean case than `eta_confirmed` |
 | `cargo_damage` | Damage reported at a handling point | Free-text notification/escalation quality — material for the planned LLM judge |
+
+## Actions
+
+The vocabulary the agent replies with (`src/squawk/models/actions.py`). All payload fields are diffed by the scorer except those marked judge material.
+
+### Current actions
+
+| Type | Fields | Meaning |
+|---|---|---|
+| `update_property` | `path`, `new_value` | Correct a field on the shipment, addressed by path (e.g. `legs[0].eta`) |
+| `notify` | `recipients`, `message` | Inform stakeholders; the message text is judge material, never diffed |
+| `escalate` | `reason` | Hand over to a human operator; the reason text is judge material, never diffed |
+
+### Future actions (ideas, not implemented)
+
+Same admission rule as future events: an action earns a place only if it creates a decision boundary the current set can't express, and only if the generator can still produce a deterministic answer key.
+
+| Type | Meaning | What it tests that current actions don't |
+|---|---|---|
+| `request_info` | Ask a party for missing information (hold reason, revised schedule, docs status) | The act-vs-ask boundary — declining to commit when the event doesn't say enough. The existing `customs_hold` already has this shape, so no event changes needed |
+| `defer` | Note the event and re-check at a date | Act-now-vs-wait — calibrated patience on delays absorbed by buffer, a richer quiet than the binary stay-silent |
+| `rebook_leg` | Pick one of the alternative sailings offered in the event | Optimization among valid options, not just recognition — a worse-but-valid pick is a natural near-miss. Requires `rolled_sailing` to carry alternatives, so it belongs with the event-correlation rework |
+| `cancel_booking` | Abandon the booking outright | Severity calibration — almost never the expected action, so any emission is a clean false positive measuring trigger-happiness |
+
+`request_info` and `defer` blur the act/stay-quiet binary: the decision matrix would need an "asked/deferred" cell (or tag), otherwise a model that defers everything looks conservatively good.
 
 ## How scoring works
 

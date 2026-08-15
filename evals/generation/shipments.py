@@ -5,6 +5,7 @@ from faker import Faker
 
 from evals.generation.templates import TemplateShipment
 from squawk.models import Contact, Event, Leg, Location, Shipment
+from squawk.models.shipment import Company
 
 
 def lookup_location(locode: str, locations_by_locode: dict[str, Location]) -> Location:
@@ -69,7 +70,11 @@ def generate_shipment(
         reference=fake.bothify("??######").upper(),
         booked_at=anchor_date,
         owner=Contact(name=fake.name(), email=fake.email()),
-        customer_contact=Contact(name=fake.name(), email=fake.email()),
+        customer=Company(
+            name=fake.company(),
+            address=fake.address(),
+            contact=Contact(name=fake.name(), email=fake.email()),
+        ),
         transport_mode=template.mode,
         place_of_receipt=lookup_location(template.place_of_receipt, locations),
         port_of_loading=legs[0].port_of_loading,

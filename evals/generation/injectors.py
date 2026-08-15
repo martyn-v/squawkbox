@@ -109,8 +109,8 @@ class ArrivalDelayInjector(ScenarioInjector):
             NotifyAction(
                 recipients=[
                     Contact(
-                        name=shipment.customer_contact.name,
-                        email=shipment.customer_contact.email,
+                        name=shipment.customer.contact.name,
+                        email=shipment.customer.contact.email,
                     )
                 ],
             ),
@@ -176,8 +176,8 @@ class DepartureDelayInjector(ScenarioInjector):
             NotifyAction(
                 recipients=[
                     Contact(
-                        name=shipment.customer_contact.name,
-                        email=shipment.customer_contact.email,
+                        name=shipment.customer.contact.name,
+                        email=shipment.customer.contact.email,
                     )
                 ],
             ),
@@ -254,8 +254,8 @@ class RolledSailingInjector(ScenarioInjector):
             NotifyAction(
                 recipients=[
                     Contact(
-                        name=shipment.customer_contact.name,
-                        email=shipment.customer_contact.email,
+                        name=shipment.customer.contact.name,
+                        email=shipment.customer.contact.email,
                     )
                 ],
             ),
@@ -300,8 +300,8 @@ class CustomsHoldInjector(ScenarioInjector):
             NotifyAction(
                 recipients=[
                     Contact(
-                        name=shipment.customer_contact.name,
-                        email=shipment.customer_contact.email,
+                        name=shipment.customer.contact.name,
+                        email=shipment.customer.contact.email,
                     )
                 ],
             ),
