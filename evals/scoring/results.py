@@ -116,6 +116,7 @@ class EvalRunResults(BaseModel):
     """The results of an evaluation run, including the overall scores and the per-case results."""
 
     model: str
+    system_prompt_hash: str
     metadata: dict[str, Any]
     summary: AggregateScore
     results: list[EvalResult]

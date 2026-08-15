@@ -7,7 +7,8 @@ from evals.logging import get_logger
 from evals.models import EvalCase
 from evals.scoring import aggregate_scores, score
 from evals.scoring.results import EvalResult, EvalRunResults
-from squawk.agent import run_agent
+from squawk.agent import run_agent, SYSTEM_PROMPT_TEMPLATE
+import hashlib
 
 logger = get_logger("runner")
 
@@ -112,8 +113,14 @@ def _write_report(
 ) -> EvalRunResults:
     summary = aggregate_scores(results)
 
+    # Calculate system prompt hash for reproducibility
+    system_prompt_hash = hashlib.sha256(
+        SYSTEM_PROMPT_TEMPLATE.template.encode()
+    ).hexdigest()
+
     run_results = EvalRunResults(
         model=model_name,
+        system_prompt_hash=system_prompt_hash,
         metadata={
             "cases_path": cases_path,
             "model_temperature": model_temperature,
@@ -144,9 +151,7 @@ def run(
                 try:
                     case = EvalCase.model_validate_json(line)
                 except ValidationError as e:
-                    raise ValueError(
-                        f"corrupt case file {cases_path}:{lineno}"
-                    ) from e
+                    raise ValueError(f"corrupt case file {cases_path}:{lineno}") from e
                 results.append(_eval_case(case, model))
         complete = True
 
