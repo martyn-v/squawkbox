@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import timedelta
 from random import Random
 
+from faker import Faker
 from pydantic import BaseModel
 
 from evals.models import Expectation
@@ -12,6 +13,7 @@ from squawk.models import (
     DepartureDelayEvent,
     EscalateAction,
     IncomingEvent,
+    RolledSailingEvent,
     RoutineEvent,
     Shipment,
     UpdatePropertyAction,
@@ -35,7 +37,7 @@ class ScenarioInjector(ABC):
         """Return true if the scenario can be applied to the given shipment, false otherwise."""
 
     @abstractmethod
-    def inject(self, shipment: Shipment, rng: Random) -> InjectionResult:
+    def inject(self, shipment: Shipment, rng: Random, fake: Faker) -> InjectionResult:
         """Inject the scenario into the shipment, returning the event and expected outcome."""
 
 
@@ -51,7 +53,7 @@ class RoutineEventInjector(ScenarioInjector):
         # Routine events are always applicable
         return True
 
-    def inject(self, shipment: Shipment, rng: Random) -> InjectionResult:
+    def inject(self, shipment: Shipment, rng: Random, fake: Faker) -> InjectionResult:
         # For simplicity, we'll just create a generic routine event and expectation
 
         leg_index = rng.randint(0, len(shipment.legs) - 1)
@@ -85,7 +87,7 @@ class ArrivalDelayInjector(ScenarioInjector):
         # Applicable if the shipment has a leg without an ATA (i.e., not yet arrived)
         return self._first_leg_underway(shipment) is not None
 
-    def inject(self, shipment: Shipment, rng: Random) -> InjectionResult:
+    def inject(self, shipment: Shipment, rng: Random, fake: Faker) -> InjectionResult:
         leg_index = self._first_leg_underway(shipment)
         if leg_index is None:
             raise ValueError("ArrivalDelayInjector is not applicable to this shipment.")
@@ -146,7 +148,7 @@ class DepartureDelayInjector(ScenarioInjector):
         # Applicable if the shipment has a leg without an ATD (i.e., not yet departed)
         return self._first_leg_at_port(shipment) is not None
 
-    def inject(self, shipment: Shipment, rng: Random) -> InjectionResult:
+    def inject(self, shipment: Shipment, rng: Random, fake: Faker) -> InjectionResult:
         leg_index = self._first_leg_at_port(shipment)
         if leg_index is None:
             raise ValueError(
@@ -190,6 +192,84 @@ class DepartureDelayInjector(ScenarioInjector):
         )
 
         tags = ["departure_delay"]
+        tags.append("final_leg" if is_final_leg else "connection_risk")
+
+        return InjectionResult(
+            event=event,
+            expectation=expectation,
+            tags=tags,
+        )
+
+
+class RolledSailingInjector(ScenarioInjector):
+    """Injects a rolled sailing event into a shipment that has a leg that has not yet departed."""
+
+    def _first_leg_not_departed(self, shipment: Shipment) -> int | None:
+        """Return the index of the first leg that has not yet departed, or None if no legs match."""
+        for i, leg in enumerate(shipment.legs):
+            if leg.atd is None:
+                return i
+        return None
+
+    def is_applicable(self, shipment: Shipment) -> bool:
+        # Applicable if the shipment is ocean and has a leg without an ATD (i.e., not yet departed)
+        return (
+            shipment.transport_mode == "ocean"
+            and self._first_leg_not_departed(shipment) is not None
+        )
+
+    def inject(self, shipment: Shipment, rng: Random, fake: Faker) -> InjectionResult:
+        leg_index = self._first_leg_not_departed(shipment)
+        if leg_index is None:
+            raise ValueError(
+                "RolledSailingInjector is not applicable to this shipment."
+            )
+
+        new_conveyance = fake.vessel_voyage()
+        new_etd = shipment.legs[leg_index].etd + timedelta(days=7)
+        new_eta = shipment.legs[leg_index].eta + timedelta(days=7)
+        is_final_leg = leg_index == len(shipment.legs) - 1
+
+        event = RolledSailingEvent(
+            leg_index=leg_index,
+            new_conveyance=new_conveyance,
+            new_etd=new_etd,
+            new_eta=new_eta,
+        )
+
+        actions: list[Action] = [
+            UpdatePropertyAction(
+                path=f"legs[{leg_index}].conveyance",
+                new_value=new_conveyance,
+            ),
+            UpdatePropertyAction(
+                path=f"legs[{leg_index}].etd",
+                new_value=new_etd,
+            ),
+            UpdatePropertyAction(
+                path=f"legs[{leg_index}].eta",
+                new_value=new_eta,
+            ),
+            NotifyAction(
+                recipients=[
+                    Contact(
+                        name=shipment.customer_contact.name,
+                        email=shipment.customer_contact.email,
+                    )
+                ],
+            ),
+        ]
+
+        if not is_final_leg:
+            # If there are subsequent legs, there is a possible rebooking going to happen and so we should escalate.
+            actions.append(EscalateAction())
+
+        expectation = Expectation(
+            should_act=True,
+            actions=actions,
+        )
+
+        tags = ["rolled_sailing"]
         tags.append("final_leg" if is_final_leg else "connection_risk")
 
         return InjectionResult(

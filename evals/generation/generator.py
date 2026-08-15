@@ -2,9 +2,11 @@ from random import Random
 import yaml
 import os
 
+from evals.faker.providers import make_faker
 from evals.generation.injectors import (
     ArrivalDelayInjector,
     DepartureDelayInjector,
+    RolledSailingInjector,
     RoutineEventInjector,
 )
 from evals.generation.shipments import (
@@ -19,7 +21,12 @@ from evals.models import EvalCase
 
 logger = get_logger("generator")
 
-INJECTORS = [ArrivalDelayInjector(), DepartureDelayInjector(), RoutineEventInjector()]
+INJECTORS = [
+    ArrivalDelayInjector(),
+    DepartureDelayInjector(),
+    RoutineEventInjector(),
+    RolledSailingInjector(),
+]
 
 
 def load_data(path: str) -> EvalData:
@@ -48,10 +55,12 @@ def generate(
             for index, template in enumerate(data.templates):
                 child_seed = f"{seed}-{index}-{variant}"
                 child_rng = Random(child_seed)
+                # Created at a fixed point so the draw from child_rng doesn't shift as the pipeline evolves
+                child_fake = make_faker(child_rng)
 
                 # Generate a clean shipment
                 shipment = generate_shipment(
-                    index, template, child_rng, locations_by_locode
+                    index, template, child_rng, child_fake, locations_by_locode
                 )
                 logger.debug(
                     "generated shipment",
@@ -72,7 +81,7 @@ def generate(
                 # Randomly select an applicable injector (RoutineEventInjector always applies, so there is always at least one) and inject an event into the shipment, generating the expected actions and tags for scoring.
                 candidates = [inj for inj in INJECTORS if inj.is_applicable(shipment)]
                 injector = child_rng.choice(candidates)
-                result = injector.inject(shipment, child_rng)
+                result = injector.inject(shipment, child_rng, child_fake)
                 injector_name, event, expectation, extra_tags = (
                     injector.__class__.__name__,
                     result.event,

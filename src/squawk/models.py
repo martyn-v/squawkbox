@@ -20,6 +20,7 @@ class Event(BaseModel):
 
 
 class Leg(BaseModel):
+    conveyance: str
     port_of_loading: Location
     port_of_discharge: Location
     etd: date
@@ -64,6 +65,14 @@ class DepartureDelayEvent(BaseModel):
     delay_days: int
 
 
+class RolledSailingEvent(BaseModel):
+    type: Literal["rolled_sailing"] = "rolled_sailing"
+    leg_index: int
+    new_conveyance: str
+    new_etd: date
+    new_eta: date
+
+
 class RoutineEvent(BaseModel):
     type: Literal["eta_confirmed"] = "eta_confirmed"
     leg_index: int
@@ -71,7 +80,7 @@ class RoutineEvent(BaseModel):
 
 
 IncomingEvent = Annotated[
-    ArrivalDelayEvent | DepartureDelayEvent | RoutineEvent,
+    ArrivalDelayEvent | DepartureDelayEvent | RolledSailingEvent | RoutineEvent,
     Field(discriminator="type"),
 ]
 

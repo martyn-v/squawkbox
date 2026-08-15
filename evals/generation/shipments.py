@@ -21,11 +21,10 @@ def generate_shipment(
     template_index: int,
     template: TemplateShipment,
     rng: Random,
+    fake: Faker,
     locations: dict[str, Location],
 ) -> Shipment:
-    """Generate a Shipment instance based on the provided template, using the given random number generator for date generation. The shipment's legs are created according to the template's specifications, and the shipment is assigned a unique ID and reference."""
-    fake = Faker()
-    fake.seed_instance(rng.randint(0, 2**32))
+    """Generate a Shipment instance based on the provided template, using the given random number generator for date generation and the given seeded Faker for names, references and conveyances. The shipment's legs are created according to the template's specifications, and the shipment is assigned a unique ID and reference."""
     anchor_date = fake.date_between(start_date="-1y", end_date="today")
 
     legs: list[Leg] = []
@@ -45,7 +44,15 @@ def generate_shipment(
         eta = etd + timedelta(
             days=rng.randint(leg_template.transit_time[0], leg_template.transit_time[1])
         )
+
+        conveyance = (
+            fake.vessel_voyage()
+            if leg_template.mode == "ocean"
+            else fake.flight_number()
+        )
+
         leg = Leg(
+            conveyance=conveyance,
             port_of_loading=lookup_location(leg_template.port_of_loading, locations),
             port_of_discharge=lookup_location(
                 leg_template.port_of_discharge, locations
