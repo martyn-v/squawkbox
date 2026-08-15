@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, computed_field
 
+from evals.models import EvalCasesMeta
 from squawk.models import Action
 
 
@@ -118,5 +119,7 @@ class EvalRunResults(BaseModel):
     model: str
     system_prompt_hash: str
     metadata: dict[str, Any]
+    cases_meta: EvalCasesMeta | None
+    cases_hash: str | None  # sha256 over canonical case JSON, dataset identity
     summary: AggregateScore
     results: list[EvalResult]

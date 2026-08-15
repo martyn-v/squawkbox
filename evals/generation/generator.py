@@ -1,5 +1,7 @@
+import datetime
 from random import Random
 import yaml
+from evals.utils import git_sha
 import os
 
 from evals.faker.providers import make_faker
@@ -17,7 +19,7 @@ from evals.generation.shipments import (
 )
 from evals.generation.templates import EvalData
 from evals.logging import get_logger
-from evals.models import EvalCase
+from evals.models import EvalCase, EvalCasesMeta
 
 
 logger = get_logger("generator")
@@ -52,6 +54,15 @@ def generate(
     locations_by_locode = {loc.locode: loc for loc in data.locations}
 
     with open(output_path, "w") as f:
+        meta = EvalCasesMeta(
+            case_count=cases,
+            seed=seed,
+            generated_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            git_sha=git_sha() or "unknown",
+        )
+        f.write(meta.model_dump_json() + "\n")
+        logger.debug("wrote metadata", total_cases=cases, output_path=output_path)
+
         for index in range(cases):
             template = data.templates[index % len(data.templates)]
             child_seed = f"{seed}-{index}"

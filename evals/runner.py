@@ -2,15 +2,16 @@ import datetime
 import os
 import time
 from langchain_ollama import ChatOllama
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 from evals.logging import get_logger
-from evals.models import EvalCase
+from evals.models import EvalCase, EvalCasesMeta, EvalCasesRow
 from evals.scoring import aggregate_scores, score
 from evals.scoring.results import EvalResult, EvalRunResults
 from squawk.agent import run_agent, SYSTEM_PROMPT_TEMPLATE
 import hashlib
 
 logger = get_logger("runner")
+CASE_ROW_ADAPTER = TypeAdapter(EvalCasesRow)
 
 
 def _setup(
@@ -41,6 +42,42 @@ def _setup(
     )
 
     return model, output_file
+
+
+def _load_cases(
+    cases_path: str,
+) -> tuple[EvalCasesMeta | None, list[EvalCase], str]:
+    """Parse the whole case file before evaluating anything: a corrupt or
+    truncated file is a dataset bug, so fail before spending model calls."""
+    meta: EvalCasesMeta | None = None
+    cases: list[EvalCase] = []
+    digest = hashlib.sha256()
+
+    with open(cases_path, "r") as f:
+        for lineno, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            try:
+                row = CASE_ROW_ADAPTER.validate_json(line)
+            except ValidationError as e:
+                raise ValueError(f"corrupt case file {cases_path}:{lineno}") from e
+
+            if isinstance(row, EvalCasesMeta):
+                meta = row
+            else:
+                cases.append(row)
+                # Hash canonical JSON, not raw lines, so reformatting the
+                # file doesn't change the dataset's identity.
+                digest.update(row.model_dump_json().encode())
+                digest.update(b"\n")
+
+    if meta and meta.case_count != len(cases):
+        raise ValueError(
+            f"case file {cases_path} declares {meta.case_count} cases "
+            f"but contains {len(cases)}"
+        )
+
+    return meta, cases, f"sha256:{digest.hexdigest()}"
 
 
 def _eval_case(case: EvalCase, model: ChatOllama) -> EvalResult:
@@ -108,6 +145,8 @@ def _write_report(
     results: list[EvalResult],
     model_name: str,
     cases_path: str,
+    cases_meta: EvalCasesMeta | None,
+    cases_hash: str | None,
     model_temperature: float,
     output_file: str,
     complete: bool = True,
@@ -122,6 +161,8 @@ def _write_report(
     run_results = EvalRunResults(
         model=model_name,
         system_prompt_hash=system_prompt_hash,
+        cases_meta=cases_meta,
+        cases_hash=cases_hash,
         metadata={
             "cases_path": cases_path,
             "model_temperature": model_temperature,
@@ -144,16 +185,23 @@ def run(
 
     results: list[EvalResult] = []
     complete = False
+    cases_meta: EvalCasesMeta | None = None
+    cases_hash: str | None = None
     try:
-        with open(cases_path, "r") as f:
-            for lineno, line in enumerate(f, 1):
-                # A corrupt case file is a dataset bug, not an agent failure:
-                # stop the run rather than silently scoring a smaller dataset.
-                try:
-                    case = EvalCase.model_validate_json(line)
-                except ValidationError as e:
-                    raise ValueError(f"corrupt case file {cases_path}:{lineno}") from e
-                results.append(_eval_case(case, model))
+        cases_meta, cases, cases_hash = _load_cases(cases_path)
+        if cases_meta:
+            logger.debug(
+                "read casefile metadata",
+                generator_version=cases_meta.generator_version,
+                seed=cases_meta.seed,
+                generated_at=cases_meta.generated_at,
+                git_sha=cases_meta.git_sha,
+                case_count=cases_meta.case_count,
+            )
+
+        for case in cases:
+            results.append(_eval_case(case, model))
+
         complete = True
 
     except Exception as e:
@@ -171,6 +219,8 @@ def run(
                 results,
                 model_name,
                 cases_path,
+                cases_meta,
+                cases_hash,
                 model_temperature,
                 output_file,
                 complete=complete,
