@@ -73,7 +73,10 @@ def push_cases(cases_path: str):
 
     for case in cases:
         langfuse.create_dataset_item(
-            id=case.case_id,
+            # item ids are unique per project across datasets, so namespace
+            # them ("." not "/": the UI puts the id in a URL path segment);
+            # the runner maps items back to cases via metadata.case_id
+            id=f"{dataset_name}.{case.case_id}",
             dataset_name=dataset_name,
             input={
                 "shipment": case.shipment,

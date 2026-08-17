@@ -139,8 +139,10 @@ def _run_cases_mirrored(
     agent_config: RunnableConfig = {"callbacks": [CallbackHandler()]}
 
     dataset = langfuse.get_dataset(dataset_name)
-    items_by_id = {item.id: item for item in dataset.items}
-    if any(case.case_id not in items_by_id for case in cases):
+    items_by_case_id = {
+        (item.metadata or {}).get("case_id"): item for item in dataset.items
+    }
+    if any(case.case_id not in items_by_case_id for case in cases):
         logger.warning(
             "langfuse dataset items don't match local cases, run will not "
             "be mirrored; re-push with `uv run -m evals push`",
@@ -154,9 +156,10 @@ def _run_cases_mirrored(
     results_by_id: dict[str, EvalResult] = {}
 
     def task(*, item, **kwargs):
-        result = _eval_case(cases_by_id[item.id], model, config=agent_config)
+        case_id = (item.metadata or {}).get("case_id")
+        result = _eval_case(cases_by_id[case_id], model, config=agent_config)
         results.append(result)
-        results_by_id[item.id] = result
+        results_by_id[case_id] = result
         if result.error is not None:
             raise RuntimeError(result.error)
         return [action.model_dump(mode="json") for action in result.actions]
@@ -176,7 +179,7 @@ def _run_cases_mirrored(
     langfuse.run_experiment(
         name=run_name,
         run_name=run_name,
-        data=[items_by_id[case.case_id] for case in cases],
+        data=[items_by_case_id[case.case_id] for case in cases],
         task=task,
         evaluators=[squawk_scores],
         max_concurrency=1,
