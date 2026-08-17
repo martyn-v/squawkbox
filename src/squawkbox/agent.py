@@ -6,14 +6,20 @@ from langchain_core.runnables import RunnableConfig
 
 from squawkbox.llm import default_model
 from squawkbox.models import AgentReply, Shipment, IncomingEvent, Action
+from squawkbox.models.actions import (
+    NotifyAction,
+    UpdatePropertyAction,
+    actions_to_prompt_text,
+)
+from squawkbox.models.shipment import Contact
 
 SYSTEM_PROMPT_TEMPLATE = PromptTemplate(
     template="""You are a shipment exception agent. You are given the current state of a shipment and one incoming event. Decide which actions, if any, to take in response.
 
 Available actions:
-- update_property: correct a field on the shipment. "path" addresses the field (e.g. "legs[0].eta"), "new_value" is the corrected value. Dates use ISO format (YYYY-MM-DD).
-- notify: inform stakeholders. "recipients" is a list of contact objects, each with "name" and "email"; "message" briefly explains why.
-- escalate: hand the shipment over to a human operator for further intervention, such as rebooking a connected leg. "reason" briefly explains why.
+<actions>
+{actions}
+</actions>
 
 Your reply must be a single JSON object with one key, "actions", holding an array of action objects. It must validate against this JSON Schema:
 
@@ -29,8 +35,11 @@ Rules:
 - Emit each distinct action at most once. No duplicate or redundant actions.
 
 Example reply:
-{{"actions": [{{"type": "update_property", "path": "legs[1].eta", "new_value": "2026-09-12"}}, {{"type": "notify", "recipients": [{{"name": "Ops Desk", "email": "ops@example.com"}}], "message": "ETA pushed 3 days due to port congestion"}}]}}""",
-    input_variables=["schema"],
+<example>
+{example}
+</example>
+""",
+    input_variables=["schema", "actions", "example"],
 )
 
 USER_PROMPT_TEMPLATE = PromptTemplate(
@@ -46,9 +55,23 @@ def run_agent(
     config: RunnableConfig | None = None,
 ) -> list[Action]:
     schema = AgentReply.model_json_schema()
+    actions = actions_to_prompt_text()
+    example = AgentReply(
+        actions=[
+            UpdatePropertyAction(path="legs[0].eta", new_value="2025-10-22"),
+            NotifyAction(
+                recipients=[Contact(name="John Doe", email="johndoe@example.org")],
+                reason="Customer should be notified about changes in the ETA",
+            ),
+        ]
+    ).model_dump_json()
 
     messages = [
-        SystemMessage(content=SYSTEM_PROMPT_TEMPLATE.format(schema=json.dumps(schema))),
+        SystemMessage(
+            content=SYSTEM_PROMPT_TEMPLATE.format(
+                schema=json.dumps(schema), actions=actions, example=example
+            )
+        ),
         HumanMessage(
             content=USER_PROMPT_TEMPLATE.format(
                 shipment=shipment.model_dump_json(),
