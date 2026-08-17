@@ -21,9 +21,10 @@ uv run -m evals --help      # list available commands
 uv run -m evals generate    # generate cases into evals/cases/cases.jsonl
 uv run -m evals run         # run the agent over the cases, write a scored report to evals/results/
 uv run -m evals summarize   # LLM-written markdown summary of a run report, picked interactively
+uv run -m evals push        # upload the cases file to Langfuse as a dataset
 ```
 
-`generate` takes `--seed` (default 42) and `--count`/`-n` (default 30, total cases; lane templates are cycled round-robin). `run` takes `--model` (default `gemma4:31b`) and `--temperature` (default 0.5), plus `--label` to record what the run is testing and `--summarize` to write the markdown summary immediately after the run. `summarize` takes `--results-file` (omit it to pick from a list) and its own `--model` and `--temperature` (default 0.2 — summarization wants less creativity than the agent under test). All accept path overrides; see `--help` on each.
+`generate` takes `--seed` (default 42) and `--count`/`-n` (default 30, total cases; lane templates are cycled round-robin). `run` takes `--model` (default `gemma4:31b`) and `--temperature` (default 0.5), plus `--label` to record what the run is testing, `--summarize` to write the markdown summary immediately after the run, and `--no-langfuse` to skip [Langfuse mirroring](#langfuse). `summarize` takes `--results-file` (omit it to pick from a list) and its own `--model` and `--temperature` (default 0.2 — summarization wants less creativity than the agent under test). All accept path overrides; see `--help` on each.
 
 ## Layout
 
@@ -34,10 +35,12 @@ src/squawkbox/          the agent under test
   llm.py             default Ollama model config
 evals/
   models.py          the case contract: EvalCase, Expectation
+  casefile.py        case file parsing, validation, and identity hash
   generation/        templates, shipment synthesis, fault injectors, generate loop
   scoring/           result models, action matching, aggregation
   runner.py          run loop: agent per case, score, aggregate, write report
   report.py          LLM-written markdown summary of a run report
+  langfuse.py        dataset push and the run-mirroring gate
   cli.py             click entry points
   data/data.yaml     lane templates and locations (the generator's input)
   cases/             generated cases (jsonl, git-ignored)
@@ -146,6 +149,35 @@ Each run writes a timestamped JSON report to `evals/results/` containing the sum
 ## Run summaries
 
 The JSON report is exhaustive but not readable. `summarize` hands the whole report to an LLM, which writes a stakeholder-facing markdown summary next to it (`<run>.md`): headline metrics, notable failures with concrete examples, and recommendations. This is presentation only — all numbers come from the deterministic scorer, and the LLM has no part in deciding whether a case passed. It is also not the planned LLM judge (see below), which would score individual message quality rather than narrate a finished run.
+
+## Langfuse
+
+Runs can optionally be mirrored to a local [Langfuse](https://langfuse.com) instance for the trace and experiment-comparison UI. The local JSON report stays the source of truth — Langfuse is a mirror, and everything about it is best-effort: if the server is down, credentials are missing, or the dataset doesn't match, `run` logs a warning and proceeds locally as if Langfuse didn't exist.
+
+### Setup
+
+Langfuse runs locally via its self-contained compose file (it pulls published images; expect ~6 containers and a couple of GB of RAM):
+
+```sh
+curl -O https://raw.githubusercontent.com/langfuse/langfuse/main/docker-compose.yml
+docker compose up -d
+```
+
+Then create an organization, project, and API key pair in the UI at `http://localhost:3000`, and put the keys in `.env` at the repo root (the CLI loads it):
+
+```sh
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_BASE_URL=http://localhost:3000
+```
+
+### Usage
+
+`push` uploads the cases file as a dataset named `cases-seed{seed}-n{count}`, one item per case keyed by `case_id`, with the case-file identity hash in the dataset metadata. Items are upserted, so re-pushing the same generation is idempotent; a different generation gets a different dataset name, keeping old runs attached to the cases they actually ran against.
+
+`run` then mirrors automatically: each run becomes a Langfuse experiment on that dataset (named `{label} {timestamp}`), with one trace per case and the deterministic scores (`passed`, `precision`, `recall`) attached. The experiment machinery is transport only — scoring is the same diff written to the local report, and cases that error produce an unscored trace marked ERROR, matching the local `diff: null`. The hash gate means a run never attaches to a dataset that doesn't match the local case file; regenerate → re-push → run.
+
+Experiments on a v4 server are append-only — there is no delete, in the API or the UI — so give throwaway runs an obvious `--label`, or skip mirroring entirely with `--no-langfuse`.
 
 ## Not built yet
 

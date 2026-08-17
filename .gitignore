@@ -10,3 +10,5 @@ wheels/
 .venv
 evals/*.jsonl
 
+# Environment variables and secrets
+.env

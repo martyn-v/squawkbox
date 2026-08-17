@@ -1,7 +1,11 @@
 import click
+from dotenv import load_dotenv
+
 
 DEFAULT_SUMMARIZE_MODEL = "gemma4:31b"
 DEFAULT_SUMMARIZE_TEMPERATURE = 0.2
+
+load_dotenv()
 
 
 @click.group()
@@ -85,6 +89,12 @@ def generate(seed: int, count: int, data: str, output: str):
     default=False,
     help="Also write a markdown summary of the results.",
 )
+@click.option(
+    "--langfuse/--no-langfuse",
+    default=True,
+    help="Mirror the run to Langfuse as an experiment.",
+    show_default=True,
+)
 def run(
     model: str,
     temperature: float,
@@ -92,6 +102,7 @@ def run(
     output: str,
     label: str | None,
     summarize: bool,
+    langfuse: bool,
 ):
     """Run the agent against a cases file.
 
@@ -99,7 +110,7 @@ def run(
     """
     from evals.runner import run
 
-    file = run(model, temperature, cases, output, label=label)
+    file = run(model, temperature, cases, output, label=label, langfuse_enabled=langfuse)
     if summarize:
         from evals.report import summarize_run_results
 
@@ -142,6 +153,21 @@ def summarize(model: str, temperature: float, results_file: str | None):
         results_file = picked[0]
 
     summarize_run_results(model, temperature, results_file)
+
+
+@cli.command()
+@click.option(
+    "--cases",
+    type=click.Path(exists=True, dir_okay=False),
+    default="evals/cases/cases.jsonl",
+    help="Cases file to upload to Langfuse.",
+    show_default=True,
+)
+def push(cases: str):
+    """Push cases to a Langfuse dataset."""
+    from evals.langfuse import push_cases
+
+    push_cases(cases)
 
 
 if __name__ == "__main__":
