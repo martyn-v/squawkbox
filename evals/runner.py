@@ -2,9 +2,9 @@ import datetime
 import os
 import time
 from langchain_ollama import ChatOllama
-from pydantic import TypeAdapter, ValidationError
+from evals.casefile import load_cases
 from evals.logging import get_logger
-from evals.models import CaseFileMeta, CaseFileRow, EvalCase
+from evals.models import CaseFileMeta, EvalCase
 from evals.scoring import aggregate_scores, score
 from evals.scoring.results import EvalResult, EvalRun
 from evals.utils import git_sha
@@ -12,7 +12,6 @@ from squawkbox.agent import run_agent, SYSTEM_PROMPT_TEMPLATE
 import hashlib
 
 logger = get_logger("runner")
-CASE_FILE_ROW_ADAPTER = TypeAdapter(CaseFileRow)
 
 
 def _setup(
@@ -41,42 +40,6 @@ def _setup(
     )
 
     return model, output_file, run_at
-
-
-def _load_cases(
-    cases_path: str,
-) -> tuple[CaseFileMeta | None, list[EvalCase], str]:
-    """Parse the whole case file before evaluating anything: a corrupt or
-    truncated file is a dataset bug, so fail before spending model calls."""
-    meta: CaseFileMeta | None = None
-    cases: list[EvalCase] = []
-    digest = hashlib.sha256()
-
-    with open(cases_path, "r") as f:
-        for lineno, line in enumerate(f, 1):
-            if not line.strip():
-                continue
-            try:
-                row = CASE_FILE_ROW_ADAPTER.validate_json(line)
-            except ValidationError as e:
-                raise ValueError(f"corrupt case file {cases_path}:{lineno}") from e
-
-            if isinstance(row, CaseFileMeta):
-                meta = row
-            else:
-                cases.append(row)
-                # Hash canonical JSON, not raw lines, so reformatting the
-                # file doesn't change the dataset's identity.
-                digest.update(row.model_dump_json().encode())
-                digest.update(b"\n")
-
-    if meta and meta.case_count != len(cases):
-        raise ValueError(
-            f"case file {cases_path} declares {meta.case_count} cases "
-            f"but contains {len(cases)}"
-        )
-
-    return meta, cases, f"sha256:{digest.hexdigest()}"
 
 
 def _eval_case(case: EvalCase, model: ChatOllama) -> EvalResult:
@@ -197,7 +160,7 @@ def run(
     cases_meta: CaseFileMeta | None = None
     cases_hash: str | None = None
     try:
-        cases_meta, cases, cases_hash = _load_cases(cases_path)
+        cases_meta, cases, cases_hash = load_cases(cases_path)
         if cases_meta:
             logger.debug(
                 "read casefile metadata",
