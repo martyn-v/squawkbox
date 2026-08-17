@@ -9,7 +9,6 @@ Findings from a harness review (2026-08-15), roughly in order of how much they h
 Related prompt/model inconsistencies:
 
 - [x] Fix the recipients prompt line to match the schema
-- [ ] `src/squawk/models.py:80` documents `path` as "a JSON pointer" while the prompt and injectors use bracket notation (`legs[0].eta`). No path canonicalization in the scorer, so `legs.0.eta` or `/legs/0/eta` becomes a near-miss even when the agent meant the right field.
 - [ ] The prompt never tells the agent _when_ to escalate, or who "the customer contact" is — the expectation encodes a specific policy (notify customer contact; escalate iff a later leg exists) the agent must guess. Fine if deliberate (measuring whether models infer it), but it should be a choice, not an accident.
 
 ## 2. No statistical rigor around a stochastic system
