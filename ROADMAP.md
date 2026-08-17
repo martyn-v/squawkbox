@@ -2,6 +2,14 @@
 
 Findings from a harness review (2026-08-15), roughly in order of how much they hurt. Completed items are trimmed as they land.
 
+## Status (2026-08-17)
+
+The project is at a natural stopping point. Everything the README claims is built and working — generate → run → score → summarize → compare → Langfuse mirror — and the gaps are honestly labeled (Not built yet, FIXMEs, this file). Measured against its own question ("how far can deterministic scoring carry agent evaluation"), the answer is in: far — answer keys for free, deterministic diffs, slice reporting, run comparison, no judge needed.
+
+Two caveats if parked as-is: (1) the numbers are estimates without error bars — overall n is fine now (100 cases / 10 templates as of 2026-08-17; at 82/100 the 95% CI is roughly ±8pp) but nothing computes it, and the fault slices are starved by imbalance, not count: routine is always applicable so clean cases take ~57% of the uniform draw, leaving slices like customs_hold at n=4 — meaningless at any overall count; (2) the second half of the research question ("where agents break as subtlety increases") is unprobed — events pre-solve correlation via `leg_index`, and clean cases are one generic ETA confirmation.
+
+The close-out plan: one short push — CI computation in the aggregate plus injector-mix weighting (the "Injector configuration" item from README's Not built yet), plus the policy-in-prompt labeled comparison (item 1's open bullet) — then park. That converts the project from "harness that runs" to "harness that produced a defensible finding". Per-case repeats (item 2) are demoted to optional: with case count already scaled, they only buy trustworthy per-case flips in `compare`. The correlation rework stays documented below as the next chapter, worth doing only for its own interest, not as wrap-up. The smaller items (run ergonomics, hybrid report, tie-breaking) are polish for a user this project may never have — skip.
+
 ## 1. The prompt contradicts the schema
 
 `src/squawk/agent.py:15` tells the model `"recipients" is a list of recipient names`, but the schema demands full `Contact` objects (`{name, email}`). A model that follows the prose emits `["Jane Doe"]`, validation fails, and the case is recorded as an error failure.
@@ -13,10 +21,11 @@ Related prompt/model inconsistencies:
 
 ## 2. No statistical rigor around a stochastic system
 
-The runner does one attempt per case at temperature 0.5 and reports point estimates. Missing:
+The runner does one attempt per case at temperature 0.5 and reports point estimates. Case count is already scaled (100 cases / 10 templates) — with one independent sample per case, more cases is a statistically valid substitute for repeats at the aggregate level, and it buys scenario coverage too. Remaining:
 
-- [ ] **Repeats/trials per case** (or a pass@k / consistency metric) — at t=0.5 a single sample tells you little; run-to-run precision will wobble
-- [ ] **Confidence intervals** — with 30 cases (3 templates × 10 variants), per-tag slices get small fast. `evals compare` surfaces each slice's `n`; CIs are the remaining piece
+- [ ] **Confidence intervals** — compute them over cases (Wilson or bootstrap) in the aggregate and show them in report/compare. Note if repeats are ever added: attempts within a case are correlated, so CIs must stay case-level, never pooled over attempts
+- [ ] **Injector-mix weighting** — the real slice-size problem is imbalance, not count: routine is always applicable and takes ~57% of the uniform draw, leaving fault slices at n=4–17. Weight the draw (or set a clean-case ratio) so fault slices reach useful n. This is README's "Injector configuration" not-built-yet item
+- [ ] *(optional, demoted)* **Repeats/trials per case** — only needed to make `compare`'s per-case flips trustworthy (distinguish "went 5/5 → 0/5" from "always was 3/5 flaky") and to measure per-case consistency. The attempt-level diff scorer is unchanged; the cost is schema (attempt field), case-grouped aggregation, and redefining what a flip means when pass is a rate
 
 ## Smaller items
 
@@ -56,7 +65,36 @@ Rename (do this in the same change as the rework, not before):
 - [ ] `EvalCase.injector` field → `scenario`, plus the per-injector slice in scoring/report aggregation — a better label anyway ("which scenario shape failed" is the question the report answers). Note: this breaks compatibility with previously generated case files and old results JSON; regenerate cases and don't diff across the rename
 - [ ] Sweep prose for the old term: README (Events and injectors section, generation bullets, Not built yet), docstrings, log fields (`injected event`, `injector=` in `generator.py`), and test names
 
-## Suggested order
+## Considered: configurable rules — Events → Impact → Actions
 
-1. Fix the recipients prompt line (item 1) — the live bug every run hits
-2. The statistical rigor (item 2, repeats + CIs) — what turns it from "runs evals" into "answers questions about models"
+Today the operating policy (delay → update dates, notify customer, escalate unless final leg) is hardcoded three times over: implicitly in each injector's expectation-building, in README prose, and nowhere in the prompt — the agent has to guess it (the deliberate-or-accident question flagged in item 1). In production a user would configure this policy, not inherit it from eval code. The move: make policy a declarative rule set that is the single source of truth for both the answer key and the prompt. That reframes the eval itself — from "can the model guess our conventions" to "can the model follow configured policy", which is the actual production job.
+
+Design decisions (settled in discussion, 2026-08-17):
+
+- **Three stages, and the middle one earns its place.** *Impact functions* (code, one per event type) compute what an event means for a shipment — pure date/state arithmetic producing a normalized `Impact` (field changes + flags like `connection_at_risk`). *Rules* (data) match on impact and bind actions. Matching on impact rather than raw event type means `arrival_delay` and `rolled_sailing` share the same rules; a new event type needs an impact function, not a new rule set. Users never configure date arithmetic.
+- **Rules are YAML parsed into pydantic, with a closed predicate vocabulary** (`flag`, `any_flag`, `has_field_changes`, `event_type`, `transport_mode`) — not an expression DSL (jsonlogic/CEL rejected: unvalidatable, unrenderable as prose, YAGNI at five event types). The vocabulary grows one named predicate at a time when a real need appears. Recipients are roles (`customer_contact`) resolved against the shipment at evaluation time. All matching rules contribute actions (additive, deduped); each rule carries a `rationale` string.
+- **One engine, two consumers.** `evaluate(rules, shipment, event) -> Expectation` in a new `src/squawkbox/rules/` module; injectors call it instead of hand-building expectations (no matching rules → `should_act=False`), and tags can derive from matched rule names + impact flags. `rules_to_prompt_text(rules)` renders each rule as a policy bullet (condition prose + rationale + action) into the system prompt, alongside `actions_to_prompt_text()` — same derive-don't-duplicate principle as the vocabulary-blocks item.
+- **Behavior-preserving by construction.** The default rule set must reproduce today's hardcoded expectations exactly — a golden test pins this. `Expectation`, scorer, and runner are untouched. Per-tenant rule storage is a production concern, out of scope; the default rule set is a YAML file in the repo.
+- **Putting policy in the prompt is an eval-design change to task difficulty** (same caveat as describing events): the guess-the-policy baseline disappears. Make the before/after a deliberate `--label`ed comparison run — that comparison is itself interesting data.
+
+Work items:
+
+- [ ] `Impact` model + per-event-type impact functions (registered by `type` tag)
+- [ ] Rule/predicate pydantic models + YAML loading, with the default rule set mirroring current policy
+- [ ] `evaluate()` engine: match rules, expand action templates, resolve roles → `Expectation`
+- [ ] `rules_to_prompt_text()` + wire into the agent system prompt (labeled comparison run)
+- [ ] Slim injectors to applicability + event synthesis; expectations and tags come from the engine
+- [ ] Golden test: default rules reproduce current hardcoded expectations exactly; snapshot test on the renderer
+
+**Does the LLM still have a job at that point?** For the core loop, honestly, no — once the event is structured and policy is deterministic rules, `evaluate()` *is* the agent, and running an LLM to re-derive what a pure function computes is paying latency and stochasticity for nothing. The LLM earns its place exactly where the rules stop:
+
+- **Messy input.** Real events arrive as carrier emails, EDI fragments, portal scrapes — not as `ArrivalDelayEvent`. Normalizing raw input into a structured event, and deciding whether it applies to this shipment at all, is judgment work. This is what the correlation rework is reaching for; that's the LLM-shaped part of the job.
+- **The uncovered tail.** The event that matches no rule still needs a decision — act, or escalate intelligently with a reason a human can use. An LLM handling the open world beats a rule engine silently doing nothing.
+- **The generative fringe.** Notification prose, escalation reasons, run summaries — the parts of the action models already marked "judge material".
+
+So the production architecture inverts: **rules execute, LLM interprets** — the LLM normalizes/correlates raw input into events, rules deterministically produce actions. Or the softer variant: LLM proposes, rules verify — the same `evaluate()` doubles as a runtime guardrail, with disagreement → escalate. Either way one engine serves evals and production, which is a point for this item, not against it. The eval still measures something real: following configured policy over messy state is what you need to trust the model at the edges rules can't check, and the labeled before/after comparison decomposes current failures into policy ignorance vs reasoning failure — a split that only exists because the rule system does. The rule system doesn't obsolete the LLM; it evicts it from the part of the job it was always the wrong tool for.
+
+**Scope call (2026-08-17): out of scope for this project.** This is a production/product feature; this project is an eval harness. The Impact stage, YAML rules, predicate vocabulary, and `rules_to_prompt_text()` only pay off when a real user is configuring real policy — parked here, not planned. The one slice that *is* eval work, and cheap: put the policy in the prompt as a hand-authored paragraph (2–3 sentences — update dates, notify customer, escalate when a later leg exists), no rule engine, then do the `--label`ed before/after run. That alone yields the policy-ignorance-vs-reasoning-failure decomposition and settles item 1's open question ("agent must guess the policy — deliberate or accident?") by making it a measured choice.
+
+Sequencing, if ever built: after the correlation rework — it renames/reshapes the injector family this builds on, and impact functions want the identifier-carrying event models, not `leg_index`.
+
