@@ -45,10 +45,17 @@ def get_run_mirror(cases_meta: CaseFileMeta, cases_hash: str) -> Langfuse | None
 
 def push_cases(cases_path: str):
     """Push cases to Langfuse."""
+
     meta, cases, hash = load_cases(cases_path)
     langfuse = get_client()
 
     dataset_name = get_dataset_name(meta)
+    logger.info(
+        "pushing cases",
+        dataset_name=dataset_name,
+        cases_path=cases_path,
+        case_count=meta.case_count,
+    )
 
     langfuse.create_dataset(
         name=dataset_name,
@@ -61,6 +68,8 @@ def push_cases(cases_path: str):
             "cases_hash": hash,
         },
     )
+
+    logger.debug("dataset created", dataset_name=dataset_name)
 
     for case in cases:
         langfuse.create_dataset_item(
@@ -79,3 +88,6 @@ def push_cases(cases_path: str):
                 "tags": case.tags,
             },
         )
+        logger.debug("dataset item created", case_id=case.case_id)
+
+    logger.info("finished pushing cases")
