@@ -89,6 +89,12 @@ def generate(seed: int, count: int, data: str, output: str):
     default=False,
     help="Also write a markdown summary of the results.",
 )
+@click.option(
+    "--langfuse/--no-langfuse",
+    default=True,
+    help="Mirror the run to Langfuse as an experiment.",
+    show_default=True,
+)
 def run(
     model: str,
     temperature: float,
@@ -96,6 +102,7 @@ def run(
     output: str,
     label: str | None,
     summarize: bool,
+    langfuse: bool,
 ):
     """Run the agent against a cases file.
 
@@ -103,7 +110,7 @@ def run(
     """
     from evals.runner import run
 
-    file = run(model, temperature, cases, output, label=label)
+    file = run(model, temperature, cases, output, label=label, langfuse_enabled=langfuse)
     if summarize:
         from evals.report import summarize_run_results
 
@@ -157,7 +164,7 @@ def summarize(model: str, temperature: float, results_file: str | None):
     show_default=True,
 )
 def push(cases: str):
-    """Push cases to Langfuse."""
+    """Push cases to a Langfuse dataset."""
     from evals.langfuse import push_cases
 
     push_cases(cases)

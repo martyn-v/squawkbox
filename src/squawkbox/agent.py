@@ -2,6 +2,7 @@ import json
 from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.language_models import BaseChatModel
+from langchain_core.runnables import RunnableConfig
 
 from squawkbox.llm import default_model
 from squawkbox.models import AgentReply, Shipment, IncomingEvent, Action
@@ -42,6 +43,7 @@ def run_agent(
     shipment: Shipment,
     incoming_event: IncomingEvent,
     model: BaseChatModel | None = None,
+    config: RunnableConfig | None = None,
 ) -> list[Action]:
     schema = AgentReply.model_json_schema()
 
@@ -57,7 +59,7 @@ def run_agent(
 
     model = model or default_model()
 
-    response = model.invoke(messages)
+    response = model.invoke(messages, config=config)
 
     raw = (
         response.content if isinstance(response.content, str) else str(response.content)

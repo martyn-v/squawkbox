@@ -1,8 +1,11 @@
 import datetime
 import os
 import time
+from langchain_core.runnables import RunnableConfig
 from langchain_ollama import ChatOllama
+from langfuse import Langfuse
 from evals.casefile import load_cases
+from evals.langfuse import get_dataset_name, get_run_mirror
 from evals.logging import get_logger
 from evals.models import CaseFileMeta, EvalCase
 from evals.scoring import aggregate_scores, score
@@ -42,7 +45,11 @@ def _setup(
     return model, output_file, run_at
 
 
-def _eval_case(case: EvalCase, model: ChatOllama) -> EvalResult:
+def _eval_case(
+    case: EvalCase,
+    model: ChatOllama,
+    config: RunnableConfig | None = None,
+) -> EvalResult:
     logger.debug(
         "evaluating case",
         case_id=case.case_id,
@@ -52,7 +59,9 @@ def _eval_case(case: EvalCase, model: ChatOllama) -> EvalResult:
 
     start_time = time.perf_counter()
     try:
-        model_actions = run_agent(case.shipment, case.incoming_event, model=model)
+        model_actions = run_agent(
+            case.shipment, case.incoming_event, model=model, config=config
+        )
     except Exception as e:
         logger.error(
             "model failed to run",
@@ -103,6 +112,78 @@ def _eval_case(case: EvalCase, model: ChatOllama) -> EvalResult:
     )
 
 
+def _run_cases_mirrored(
+    cases: list[EvalCase],
+    model: ChatOllama,
+    langfuse: Langfuse,
+    dataset_name: str,
+    run_name: str,
+    run_metadata: dict[str, str],
+    results: list[EvalResult],
+) -> None:
+    """Evaluate all cases through langfuse.run_experiment so the run shows up
+    as an experiment on the dataset (the v4 server has no other supported way
+    to attach traces to dataset items).
+
+    The experiment machinery is only the transport: the task delegates to
+    _eval_case and appends to `results` as it goes (so the caller's partial
+    report on interrupt keeps working), and the evaluator just replays the
+    already-computed deterministic diff, looked up via the case_id each
+    dataset item carries in its metadata. Errored cases re-raise so the
+    trace is marked ERROR and left unscored, matching diff=None locally."""
+    from langfuse import Evaluation
+    from langfuse.langchain import CallbackHandler
+
+    # Nests a generation observation (rendered prompt, raw reply, model params)
+    # under each case's experiment trace.
+    agent_config: RunnableConfig = {"callbacks": [CallbackHandler()]}
+
+    dataset = langfuse.get_dataset(dataset_name)
+    items_by_id = {item.id: item for item in dataset.items}
+    if any(case.case_id not in items_by_id for case in cases):
+        logger.warning(
+            "langfuse dataset items don't match local cases, run will not "
+            "be mirrored; re-push with `uv run -m evals push`",
+            dataset_name=dataset_name,
+        )
+        for case in cases:
+            results.append(_eval_case(case, model))
+        return
+
+    cases_by_id = {case.case_id: case for case in cases}
+    results_by_id: dict[str, EvalResult] = {}
+
+    def task(*, item, **kwargs):
+        result = _eval_case(cases_by_id[item.id], model, config=agent_config)
+        results.append(result)
+        results_by_id[item.id] = result
+        if result.error is not None:
+            raise RuntimeError(result.error)
+        return [action.model_dump(mode="json") for action in result.actions]
+
+    def squawk_scores(*, metadata, **kwargs):
+        case_id = (metadata or {}).get("case_id")
+        result = results_by_id.get(case_id) if isinstance(case_id, str) else None
+        if result is None or result.diff is None:
+            return []
+        evaluations = [Evaluation(name="passed", value=float(result.diff.passed))]
+        if result.diff.precision is not None:
+            evaluations.append(Evaluation(name="precision", value=result.diff.precision))
+        if result.diff.recall is not None:
+            evaluations.append(Evaluation(name="recall", value=result.diff.recall))
+        return evaluations
+
+    langfuse.run_experiment(
+        name=run_name,
+        run_name=run_name,
+        data=[items_by_id[case.case_id] for case in cases],
+        task=task,
+        evaluators=[squawk_scores],
+        max_concurrency=1,
+        metadata=run_metadata,
+    )
+
+
 def _write_report(
     results: list[EvalResult],
     model_name: str,
@@ -150,6 +231,7 @@ def run(
     cases_path: str,
     output_path: str,
     label: str | None = None,
+    langfuse_enabled: bool = True,
 ) -> str:
     model, output_file, run_at = _setup(
         model_name, model_temperature, cases_path, output_path
@@ -159,6 +241,7 @@ def run(
     complete = False
     cases_meta: CaseFileMeta | None = None
     cases_hash: str | None = None
+    langfuse: Langfuse | None = None
     try:
         cases_meta, cases, cases_hash = load_cases(cases_path)
         if cases_meta:
@@ -171,8 +254,27 @@ def run(
                 case_count=cases_meta.case_count,
             )
 
-        for case in cases:
-            results.append(_eval_case(case, model))
+        langfuse = (
+            get_run_mirror(cases_meta, cases_hash) if langfuse_enabled else None
+        )
+        if langfuse is not None:
+            _run_cases_mirrored(
+                cases,
+                model,
+                langfuse,
+                get_dataset_name(cases_meta),
+                run_name=f"{label} {run_at}" if label else run_at,
+                run_metadata={
+                    "model": model_name,
+                    "model_temperature": str(model_temperature),
+                    "git_sha": git_sha() or "unknown",
+                    "label": label or "",
+                },
+                results=results,
+            )
+        else:
+            for case in cases:
+                results.append(_eval_case(case, model))
 
         complete = True
 
@@ -186,6 +288,8 @@ def run(
         )
         raise
     finally:
+        if langfuse is not None:
+            langfuse.flush()
         if results:
             run_results = _write_report(
                 results,
