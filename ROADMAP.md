@@ -17,8 +17,7 @@ Related prompt/model inconsistencies:
 The runner does one attempt per case at temperature 0.5 and reports point estimates. Missing:
 
 - [ ] **Repeats/trials per case** (or a pass@k / consistency metric) — at t=0.5 a single sample tells you little; run-to-run precision will wobble
-- [ ] **Run comparison tooling** — results carry the model name, but nothing diffs two runs (model A vs B, prompt v1 vs v2), which is the main thing an eval harness exists for. Design settled below ("Planned: run comparison")
-- [ ] **Confidence intervals, or at least n per slice surfaced prominently** — with 30 cases (3 templates × 10 variants), per-tag slices get small fast
+- [ ] **Confidence intervals** — with 30 cases (3 templates × 10 variants), per-tag slices get small fast. `evals compare` surfaces each slice's `n`; CIs are the remaining piece
 
 ## Smaller items
 
@@ -29,27 +28,6 @@ The runner does one attempt per case at temperature 0.5 and reports point estima
 - [ ] **No run ergonomics**: no way to run a subset (`--limit`, filter by tag/case-id) for quick iteration, no progress indication beyond debug logs, no token counts (only latency)
 - [ ] **Near-miss tie-breaking**: pairing picks the candidate with the fewest mismatch strings (`evals/scoring/scorer.py:108`), but for `update_property` both "wrong path" and "wrong value" produce exactly one reason, so a completely-wrong-field action ties with an almost-right one. Greedy pairing is fine at this scale, but the tie means near-miss quality isn't distinguished
 - [ ] **Derive prompt vocabulary blocks from the models, not hand-written prose**: the "Available actions" block in `src/squawk/agent.py:12-15` duplicates the docstrings in `src/squawk/models/actions.py` and has already drifted (the recipients bug, item 1). Generate it by walking the discriminated union (`typing.get_args` + `__doc__` + `model_fields`) — the union is the registry; don't build a separate one. Do the actions block first (fixes the live drift class), and extend to events when they grow (natural moment: the correlation rework). Note: the prompt currently describes *zero* events — the model reads raw payloads cold, which is part of what's being measured. Describing events is an eval-design change to task difficulty, not a refactor; make it a deliberate, `--label`ed comparison run. Prompt-hash provenance already captures the resulting prompt changes
-
-## Planned: run comparison — `evals compare`
-
-Diff two results files to answer "did this change help": model A vs B, prompt v1 vs v2. Fills the run-comparison bullet in item 2. `evals/picker.py` already supports picking exactly N files, so the interactive flow is pre-built.
-
-Design decisions (settled in discussion, 2026-08-15):
-
-- **CLI**: new `compare` command: `evals compare [FILE_A] [FILE_B]`. Omit the files to pick two interactively via the existing `pick_results_files(count=2)`. Older run = baseline, newer = candidate (timestamp filenames already sort). Prints markdown to stdout; optional `-o` writes it alongside the results.
-- **Comparison logic** in a new `evals/scoring/compare.py`, tests-first. A `RunComparison` pydantic model built from two `EvalRun`s:
-  - **Header** — model, temperature, label, git_sha, prompt hash for each side, so the diff says *what changed* between runs.
-  - **Metric deltas** for overall + each slice (`by_injector`, `by_tag`, `by_action_type`): pass rate, precision, recall, plus decision-matrix rates, shown as `baseline → candidate (Δ)` with each slice's `n` visible (surfaces the small-n caveat without building CIs yet).
-  - **Case flips**, joined on `case_id`: fixed (fail→pass), regressed (pass→fail), still-failing, plus cases present in only one run. Regressions listed with their diff reasons — the actionable part.
-- **Guardrails**: refuse to compare when `cases_hash` differs (different dataset = meaningless deltas), overridable with `--force`, which skips case flips and marks deltas as not-like-for-like. Differing git_sha/prompt hash is fine — that's usually the point — but flagged in the header.
-- **Rendering is deterministic** — f-string/table markdown, no LLM. Consistent with the hybrid-report direction in Smaller items: numbers come from computed fields, never a model.
-- **Out of scope** (separate roadmap items): repeats/pass@k, confidence intervals, provider abstraction.
-
-Work items:
-
-- [ ] `RunComparison` model + comparison logic in `evals/scoring/compare.py` (tests first)
-- [ ] Markdown rendering of header, delta tables, and case flips
-- [ ] `compare` CLI command with interactive picker fallback, `-o`, and `--force`
 
 ## Planned: event applicability — raw events, agent-side correlation
 
@@ -82,4 +60,4 @@ Rename (do this in the same change as the rework, not before):
 ## Suggested order
 
 1. Fix the recipients prompt line (item 1) — the live bug every run hits
-2. The statistical and comparison tooling (item 2) — what turns it from "runs evals" into "answers questions about models"
+2. The statistical rigor (item 2, repeats + CIs) — what turns it from "runs evals" into "answers questions about models"

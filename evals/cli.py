@@ -110,7 +110,9 @@ def run(
     """
     from evals.runner import run
 
-    file = run(model, temperature, cases, output, label=label, langfuse_enabled=langfuse)
+    file = run(
+        model, temperature, cases, output, label=label, langfuse_enabled=langfuse
+    )
     if summarize:
         from evals.report import summarize_run_results
 
@@ -153,6 +155,44 @@ def summarize(model: str, temperature: float, results_file: str | None):
         results_file = picked[0]
 
     summarize_run_results(model, temperature, results_file)
+
+
+@cli.command()
+@click.argument("file_a", type=click.Path(exists=True, dir_okay=False), required=False)
+@click.argument("file_b", type=click.Path(exists=True, dir_okay=False), required=False)
+@click.option(
+    "--force",
+    type=bool,
+    is_flag=True,
+    default=False,
+    help="Compare runs even when their case files differ (deltas flagged, flips omitted)",
+)
+@click.option(
+    "-o",
+    "--output",
+    type=click.Path(dir_okay=False, writable=True),
+    default=None,
+    help="Also write the comparison markdown to this file.",
+)
+def compare(file_a: str | None, file_b: str | None, force: bool, output: str | None):
+    """Diff two results files: metric deltas per slice and per-case flips.
+
+    The older run is the baseline, the newer the candidate. Omit the files
+    to pick two interactively.
+    """
+    from evals.scoring.compare import compare
+
+    if file_a is None or file_b is None:
+        from evals.picker import pick_results_files
+
+        picked = pick_results_files(count=2)
+        if not picked or len(picked) != 2:
+            raise click.UsageError("select exactly 2 files")
+
+        file_a = picked[0]
+        file_b = picked[1]
+
+    compare(file_a, file_b, force, output)
 
 
 @cli.command()

@@ -21,10 +21,11 @@ uv run -m evals --help      # list available commands
 uv run -m evals generate    # generate cases into evals/cases/cases.jsonl
 uv run -m evals run         # run the agent over the cases, write a scored report to evals/results/
 uv run -m evals summarize   # LLM-written markdown summary of a run report, picked interactively
+uv run -m evals compare     # diff two run reports: metric deltas per slice and per-case flips
 uv run -m evals push        # upload the cases file to Langfuse as a dataset
 ```
 
-`generate` takes `--seed` (default 42) and `--count`/`-n` (default 30, total cases; lane templates are cycled round-robin). `run` takes `--model` (default `gemma4:31b`) and `--temperature` (default 0.5), plus `--label` to record what the run is testing, `--summarize` to write the markdown summary immediately after the run, and `--no-langfuse` to skip [Langfuse mirroring](#langfuse). `summarize` takes `--results-file` (omit it to pick from a list) and its own `--model` and `--temperature` (default 0.2 — summarization wants less creativity than the agent under test). All accept path overrides; see `--help` on each.
+`generate` takes `--seed` (default 42) and `--count`/`-n` (default 30, total cases; lane templates are cycled round-robin). `run` takes `--model` (default `gemma4:31b`) and `--temperature` (default 0.5), plus `--label` to record what the run is testing, `--summarize` to write the markdown summary immediately after the run, and `--no-langfuse` to skip [Langfuse mirroring](#langfuse). `summarize` takes `--results-file` (omit it to pick from a list) and its own `--model` and `--temperature` (default 0.2 — summarization wants less creativity than the agent under test). `compare` takes two results files as arguments (omit them to pick two from a list), plus `-o` to also write the comparison markdown to a file and `--force` to compare across differing case files. All accept path overrides; see `--help` on each.
 
 ## Layout
 
@@ -37,7 +38,7 @@ evals/
   models.py          the case contract: EvalCase, Expectation
   casefile.py        case file parsing, validation, and identity hash
   generation/        templates, shipment synthesis, fault injectors, generate loop
-  scoring/           result models, action matching, aggregation
+  scoring/           result models, action matching, aggregation, run comparison
   runner.py          run loop: agent per case, score, aggregate, write report
   report.py          LLM-written markdown summary of a run report
   langfuse.py        dataset push and the run-mirroring gate
@@ -149,6 +150,16 @@ Each run writes a timestamped JSON report to `evals/results/` containing the sum
 ## Run summaries
 
 The JSON report is exhaustive but not readable. `summarize` hands the whole report to an LLM, which writes a stakeholder-facing markdown summary next to it (`<run>.md`): headline metrics, notable failures with concrete examples, and recommendations. This is presentation only — all numbers come from the deterministic scorer, and the LLM has no part in deciding whether a case passed. It is also not the planned LLM judge (see below), which would score individual message quality rather than narrate a finished run.
+
+## Comparing runs
+
+`compare` diffs two run reports to answer "did this change help" — model A vs B, prompt v1 vs v2. The older run is the baseline, the newer the candidate, regardless of argument order. The report has three sections:
+
+- **Header** — what was tested on each side (model, temperature, label, git sha, prompt hash), with differing rows flagged. Differing git sha or prompt hash is normal — that's usually the point of the comparison.
+- **Summary deltas** — pass rate, precision, and recall as `baseline → candidate (Δ)` for overall and each slice (injector, tag, action type) with each slice's `n` visible, plus the decision-matrix rates (false alarm, missed act).
+- **Case flips** — joined on case id: regressed cases first with their diff reasons, then fixed, still-failing, and cases present in only one run.
+
+Comparing runs from different case files is refused — deltas across datasets are meaningless. `--force` overrides: the deltas are flagged as not like-for-like and case flips are omitted. Rendering is deterministic markdown (rich in the terminal, plain text via `-o`); no LLM is involved anywhere.
 
 ## Langfuse
 

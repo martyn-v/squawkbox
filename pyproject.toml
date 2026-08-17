@@ -18,6 +18,8 @@ dependencies = [
     "python-dotenv>=1.2.3",
     "pyyaml>=6.0.3",
     "questionary>=2.1.1",
+    "rich>=15.0.0",
+    "snakemd>=2.4.1",
     "structlog>=26.1.0",
 ]
 
