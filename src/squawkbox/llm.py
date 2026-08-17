@@ -12,6 +12,7 @@ def create_model(
     temperature: float | None = DEFAULT_MODEL_TEMPERATURE,
     format: Literal["json"] | None = None,
     reasoning: bool = False,
+    timeout: int = DEFAULT_TIMEOUT_S,
 ) -> BaseChatModel:
     provider, _, model_name = model.partition("/")
 

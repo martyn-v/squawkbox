@@ -82,7 +82,7 @@ def summarize_run_results(model_name: str, model_temperature: float, evals_file:
         ),
     ]
 
-    model = create_model(model_name, model_temperature)
+    model = create_model(model_name, model_temperature, timeout=120)
 
     response = model.invoke(messages)
     output_file = evals_file.replace(".json", ".md")
