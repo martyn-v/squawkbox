@@ -2,7 +2,7 @@ import datetime
 import os
 import time
 from langchain_core.runnables import RunnableConfig
-from langchain_ollama import ChatOllama
+from langchain_core.language_models import BaseChatModel
 from langfuse import Langfuse
 from evals.casefile import load_cases
 from evals.langfuse import get_dataset_name, get_run_mirror
@@ -14,12 +14,14 @@ from evals.utils import git_sha
 from squawkbox.agent import run_agent, SYSTEM_PROMPT_TEMPLATE
 import hashlib
 
+from squawkbox.llm import create_model
+
 logger = get_logger("runner")
 
 
 def _setup(
     model_name: str, model_temperature: float, cases_path: str, output_path: str
-) -> tuple[ChatOllama, str, str]:
+) -> tuple[BaseChatModel, str, str]:
     # Ensure output path exists
     os.makedirs(output_path, exist_ok=True)
 
@@ -33,21 +35,14 @@ def _setup(
         cases_path=cases_path,
         output_path=output_file,
     )
-
-    model = ChatOllama(
-        model=model_name,
-        temperature=model_temperature,
-        format="json",
-        reasoning=False,
-        client_kwargs={"timeout": 30},
-    )
+    model = create_model(model=model_name, temperature=model_temperature, format="json")
 
     return model, output_file, run_at
 
 
 def _eval_case(
     case: EvalCase,
-    model: ChatOllama,
+    model: BaseChatModel,
     config: RunnableConfig | None = None,
 ) -> EvalResult:
     logger.debug(
@@ -114,7 +109,7 @@ def _eval_case(
 
 def _run_cases_mirrored(
     cases: list[EvalCase],
-    model: ChatOllama,
+    model: BaseChatModel,
     langfuse: Langfuse,
     dataset_name: str,
     run_name: str,
@@ -171,7 +166,9 @@ def _run_cases_mirrored(
             return []
         evaluations = [Evaluation(name="passed", value=float(result.diff.passed))]
         if result.diff.precision is not None:
-            evaluations.append(Evaluation(name="precision", value=result.diff.precision))
+            evaluations.append(
+                Evaluation(name="precision", value=result.diff.precision)
+            )
         if result.diff.recall is not None:
             evaluations.append(Evaluation(name="recall", value=result.diff.recall))
         return evaluations
@@ -257,9 +254,7 @@ def run(
                 case_count=cases_meta.case_count,
             )
 
-        langfuse = (
-            get_run_mirror(cases_meta, cases_hash) if langfuse_enabled else None
-        )
+        langfuse = get_run_mirror(cases_meta, cases_hash) if langfuse_enabled else None
         if langfuse is not None:
             _run_cases_mirrored(
                 cases,

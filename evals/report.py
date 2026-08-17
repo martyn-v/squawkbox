@@ -2,9 +2,9 @@ import json
 import random
 from langchain_core.prompts import PromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
 from evals.logging import get_logger
 from evals.scoring.results import EvalRun
+from squawkbox.llm import create_model
 
 logger = get_logger("report")
 
@@ -82,10 +82,7 @@ def summarize_run_results(model_name: str, model_temperature: float, evals_file:
         ),
     ]
 
-    model = ChatOllama(
-        model=model_name,
-        temperature=model_temperature,
-    )
+    model = create_model(model_name, model_temperature)
 
     response = model.invoke(messages)
     output_file = evals_file.replace(".json", ".md")

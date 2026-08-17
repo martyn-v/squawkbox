@@ -1,8 +1,10 @@
 import click
 from dotenv import load_dotenv
 
+from squawkbox.llm import DEFAULT_MODEL, DEFAULT_MODEL_TEMPERATURE
 
-DEFAULT_SUMMARIZE_MODEL = "gemma4:31b"
+
+DEFAULT_SUMMARIZE_MODEL = "ollama/gemma4:31b"
 DEFAULT_SUMMARIZE_TEMPERATURE = 0.2
 
 load_dotenv()
@@ -50,14 +52,14 @@ def generate(seed: int, count: int, data: str, output: str):
 @click.option(
     "--model",
     "-m",
-    default="gemma4:31b",
-    help="Model to evaluate.",
+    default=DEFAULT_MODEL,
+    help="Model to evaluate. (In the form: provider/model_name, e.g. ollama/gemma4:31b)",
     show_default=True,
 )
 @click.option(
     "--temperature",
     "-t",
-    default=0.5,
+    default=DEFAULT_MODEL_TEMPERATURE,
     help="Sampling temperature for the evaluated model.",
     show_default=True,
 )
@@ -126,7 +128,7 @@ def run(
     "--model",
     "-m",
     default=DEFAULT_SUMMARIZE_MODEL,
-    help="Model that writes the summary.",
+    help="Model that writes the summary. (In the form: provider/model_name, e.g. ollama/gemma4:31b)",
     show_default=True,
 )
 @click.option(

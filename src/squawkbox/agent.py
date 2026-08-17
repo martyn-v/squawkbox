@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import RunnableConfig
 
-from squawkbox.llm import default_model
+from squawkbox.llm import create_model
 from squawkbox.models import AgentReply, Shipment, IncomingEvent, Action
 from squawkbox.models.actions import (
     NotifyAction,
@@ -80,7 +80,7 @@ def run_agent(
         ),
     ]
 
-    model = model or default_model()
+    model = model or create_model(format="json")
 
     response = model.invoke(messages, config=config)
 
