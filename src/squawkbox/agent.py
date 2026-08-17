@@ -12,7 +12,7 @@ SYSTEM_PROMPT_TEMPLATE = PromptTemplate(
 
 Available actions:
 - update_property: correct a field on the shipment. "path" addresses the field (e.g. "legs[0].eta"), "new_value" is the corrected value. Dates use ISO format (YYYY-MM-DD).
-- notify: inform stakeholders. "recipients" is a list of recipient names; "message" briefly explains why.
+- notify: inform stakeholders. "recipients" is a list of contact objects, each with "name" and "email"; "message" briefly explains why.
 - escalate: hand the shipment over to a human operator for further intervention, such as rebooking a connected leg. "reason" briefly explains why.
 
 Your reply must be a single JSON object with one key, "actions", holding an array of action objects. It must validate against this JSON Schema:
@@ -29,7 +29,7 @@ Rules:
 - Emit each distinct action at most once. No duplicate or redundant actions.
 
 Example reply:
-{{"actions": [{{"type": "update_property", "path": "legs[1].eta", "new_value": "2026-09-12"}}, {{"type": "notify", "recipients": ["ops"], "message": "ETA pushed 3 days due to port congestion"}}]}}""",
+{{"actions": [{{"type": "update_property", "path": "legs[1].eta", "new_value": "2026-09-12"}}, {{"type": "notify", "recipients": [{{"name": "Ops Desk", "email": "ops@example.com"}}], "message": "ETA pushed 3 days due to port congestion"}}]}}""",
     input_variables=["schema"],
 )
 
