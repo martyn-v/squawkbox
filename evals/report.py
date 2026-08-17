@@ -9,6 +9,7 @@ from squawkbox.llm import create_model
 logger = get_logger("report")
 
 MAX_SAMPLED_FAILURES = 25
+MODEL_TIMEOUT = 120
 
 SYSTEM_PROMPT_TEMPLATE = PromptTemplate(
     template="""
@@ -82,7 +83,7 @@ def summarize_run_results(model_name: str, model_temperature: float, evals_file:
         ),
     ]
 
-    model = create_model(model_name, model_temperature, timeout=120)
+    model = create_model(model_name, model_temperature, timeout=MODEL_TIMEOUT)
 
     response = model.invoke(messages)
     output_file = evals_file.replace(".json", ".md")
