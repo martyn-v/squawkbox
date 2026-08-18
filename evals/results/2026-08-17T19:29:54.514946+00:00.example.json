@@ -1,0 +1,4444 @@
+{
+  "model": "ollama/gemma4:31b",
+  "model_temperature": 0.5,
+  "system_prompt_hash": "2b3185df9d0a7ef3cbcf51d9a6599bc8b7119c834d4190162917d7b9383558fb",
+  "git_sha": "0119852f8da8af2d5494ff243459f09653f4d1f1",
+  "cases_path": "evals/cases/cases.jsonl",
+  "cases_meta": {
+    "generator_version": "0.1.0",
+    "seed": 42,
+    "generated_at": "2026-08-17T16:33:35.660946+00:00",
+    "git_sha": "36c1a05c8f42054dc9671f2ead0b7cabbe1e8f86",
+    "case_count": 100
+  },
+  "cases_hash": "sha256:7acfc92d6eb2baf84b74f84b62efbcca57dbdb7e7c2119472cd45292e8e4f216",
+  "label": null,
+  "run_at": "2026-08-17T19:29:54.514946+00:00",
+  "complete": true,
+  "summary": {
+    "overall": {
+      "cases": 100,
+      "passed_cases": 82,
+      "errors": 0,
+      "exact_matches": 116,
+      "near_misses": 0,
+      "false_positives": 10,
+      "false_negatives": 14,
+      "pass_rate": 0.82,
+      "precision": 0.9206349206349206,
+      "recall": 0.8923076923076924
+    },
+    "decisions": {
+      "true_act": 43,
+      "missed_act": 0,
+      "false_alarm": 0,
+      "true_quiet": 57,
+      "false_alarm_rate": 0.0,
+      "missed_act_rate": 0.0
+    },
+    "by_injector": {
+      "ArrivalDelayInjector": {
+        "cases": 12,
+        "passed_cases": 10,
+        "errors": 0,
+        "exact_matches": 24,
+        "near_misses": 0,
+        "false_positives": 2,
+        "false_negatives": 2,
+        "pass_rate": 0.8333333333333334,
+        "precision": 0.9230769230769231,
+        "recall": 0.9230769230769231
+      },
+      "CustomsHoldInjector": {
+        "cases": 4,
+        "passed_cases": 0,
+        "errors": 0,
+        "exact_matches": 4,
+        "near_misses": 0,
+        "false_positives": 4,
+        "false_negatives": 0,
+        "pass_rate": 0.0,
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      "DepartureDelayInjector": {
+        "cases": 17,
+        "passed_cases": 8,
+        "errors": 0,
+        "exact_matches": 48,
+        "near_misses": 0,
+        "false_positives": 4,
+        "false_negatives": 9,
+        "pass_rate": 0.47058823529411764,
+        "precision": 0.9230769230769231,
+        "recall": 0.8421052631578947
+      },
+      "RolledSailingInjector": {
+        "cases": 10,
+        "passed_cases": 7,
+        "errors": 0,
+        "exact_matches": 40,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 3,
+        "pass_rate": 0.7,
+        "precision": 1.0,
+        "recall": 0.9302325581395349
+      },
+      "RoutineEventInjector": {
+        "cases": 57,
+        "passed_cases": 57,
+        "errors": 0,
+        "exact_matches": 0,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "pass_rate": 1.0,
+        "precision": null,
+        "recall": null
+      }
+    },
+    "by_tag": {
+      "arrival_delay": {
+        "cases": 12,
+        "passed_cases": 10,
+        "errors": 0,
+        "exact_matches": 24,
+        "near_misses": 0,
+        "false_positives": 2,
+        "false_negatives": 2,
+        "pass_rate": 0.8333333333333334,
+        "precision": 0.9230769230769231,
+        "recall": 0.9230769230769231
+      },
+      "arrived": {
+        "cases": 29,
+        "passed_cases": 25,
+        "errors": 0,
+        "exact_matches": 4,
+        "near_misses": 0,
+        "false_positives": 4,
+        "false_negatives": 0,
+        "pass_rate": 0.8620689655172413,
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      "clean": {
+        "cases": 57,
+        "passed_cases": 57,
+        "errors": 0,
+        "exact_matches": 0,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "pass_rate": 1.0,
+        "precision": null,
+        "recall": null
+      },
+      "connection_risk": {
+        "cases": 11,
+        "passed_cases": 0,
+        "errors": 0,
+        "exact_matches": 34,
+        "near_misses": 0,
+        "false_positives": 6,
+        "false_negatives": 11,
+        "pass_rate": 0.0,
+        "precision": 0.85,
+        "recall": 0.7555555555555555
+      },
+      "customs_hold": {
+        "cases": 4,
+        "passed_cases": 0,
+        "errors": 0,
+        "exact_matches": 4,
+        "near_misses": 0,
+        "false_positives": 4,
+        "false_negatives": 0,
+        "pass_rate": 0.0,
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      "departure_delay": {
+        "cases": 17,
+        "passed_cases": 8,
+        "errors": 0,
+        "exact_matches": 48,
+        "near_misses": 0,
+        "false_positives": 4,
+        "false_negatives": 9,
+        "pass_rate": 0.47058823529411764,
+        "precision": 0.9230769230769231,
+        "recall": 0.8421052631578947
+      },
+      "direct": {
+        "cases": 60,
+        "passed_cases": 55,
+        "errors": 0,
+        "exact_matches": 69,
+        "near_misses": 0,
+        "false_positives": 2,
+        "false_negatives": 3,
+        "pass_rate": 0.9166666666666666,
+        "precision": 0.971830985915493,
+        "recall": 0.9583333333333334
+      },
+      "final_leg": {
+        "cases": 28,
+        "passed_cases": 25,
+        "errors": 0,
+        "exact_matches": 78,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 3,
+        "pass_rate": 0.8928571428571429,
+        "precision": 1.0,
+        "recall": 0.9629629629629629
+      },
+      "pre_departure": {
+        "cases": 38,
+        "passed_cases": 28,
+        "errors": 0,
+        "exact_matches": 73,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 10,
+        "pass_rate": 0.7368421052631579,
+        "precision": 1.0,
+        "recall": 0.8795180722891566
+      },
+      "rolled_sailing": {
+        "cases": 10,
+        "passed_cases": 7,
+        "errors": 0,
+        "exact_matches": 40,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 3,
+        "pass_rate": 0.7,
+        "precision": 1.0,
+        "recall": 0.9302325581395349
+      },
+      "routine": {
+        "cases": 57,
+        "passed_cases": 57,
+        "errors": 0,
+        "exact_matches": 0,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "pass_rate": 1.0,
+        "precision": null,
+        "recall": null
+      },
+      "transshipment": {
+        "cases": 40,
+        "passed_cases": 27,
+        "errors": 0,
+        "exact_matches": 47,
+        "near_misses": 0,
+        "false_positives": 8,
+        "false_negatives": 11,
+        "pass_rate": 0.675,
+        "precision": 0.8545454545454545,
+        "recall": 0.8103448275862069
+      },
+      "underway": {
+        "cases": 33,
+        "passed_cases": 29,
+        "errors": 0,
+        "exact_matches": 39,
+        "near_misses": 0,
+        "false_positives": 6,
+        "false_negatives": 4,
+        "pass_rate": 0.8787878787878788,
+        "precision": 0.8666666666666667,
+        "recall": 0.9069767441860465
+      }
+    },
+    "by_action_type": {
+      "escalate": {
+        "cases": 15,
+        "passed_cases": 0,
+        "errors": 0,
+        "exact_matches": 0,
+        "near_misses": 0,
+        "false_positives": 4,
+        "false_negatives": 11,
+        "pass_rate": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "notify": {
+        "cases": 43,
+        "passed_cases": 43,
+        "errors": 0,
+        "exact_matches": 43,
+        "near_misses": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "pass_rate": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "update_property": {
+        "cases": 39,
+        "passed_cases": 33,
+        "errors": 0,
+        "exact_matches": 73,
+        "near_misses": 0,
+        "false_positives": 6,
+        "false_negatives": 3,
+        "pass_rate": 0.8461538461538461,
+        "precision": 0.9240506329113924,
+        "recall": 0.9605263157894737
+      }
+    }
+  },
+  "results": [
+    {
+      "case_id": "case-00000",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 15538.38712500874
+    },
+    {
+      "case_id": "case-00001",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2634.6832079580054
+    },
+    {
+      "case_id": "case-00002",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-05-08"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Steven Gomez",
+              "email": "ksmith@example.net"
+            }
+          ],
+          "reason": "The shipment is delayed by 5 days; the new ETA is 2026-05-08."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-05-08"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Steven Gomez",
+                "email": "ksmith@example.net"
+              }
+            ],
+            "reason": "The shipment is delayed by 5 days; the new ETA is 2026-05-08."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5254.603583016433
+    },
+    {
+      "case_id": "case-00003",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-08-11"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Donald Lewis",
+              "email": "williamsonjennifer@example.org"
+            }
+          ],
+          "reason": "The shipment has been delayed by 5 days, updating the estimated arrival date to 2026-08-11."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-08-11"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Donald Lewis",
+                "email": "williamsonjennifer@example.org"
+              }
+            ],
+            "reason": "The shipment has been delayed by 5 days, updating the estimated arrival date to 2026-08-11."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-07-26"
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.6666666666666666
+      },
+      "latency_ms": 5409.7872079582885
+    },
+    {
+      "case_id": "case-00004",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "departure_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-04-20"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-04-24"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Amanda Sanders",
+              "email": "kellymaria@example.org"
+            }
+          ],
+          "reason": "Departure delay of 5 days on the first leg has shifted the ETD and ETA."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-04-20"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-04-24"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Amanda Sanders",
+                "email": "kellymaria@example.org"
+              }
+            ],
+            "reason": "Departure delay of 5 days on the first leg has shifted the ETD and ETA."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      "latency_ms": 6371.40675005503
+    },
+    {
+      "case_id": "case-00005",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-03-01"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-03-15"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Kristopher Taylor",
+              "email": "wbrown@example.net"
+            }
+          ],
+          "reason": "The shipment departure is delayed by 1 day, affecting the estimated arrival date."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-03-01"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-03-15"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Kristopher Taylor",
+                "email": "wbrown@example.net"
+              }
+            ],
+            "reason": "The shipment departure is delayed by 1 day, affecting the estimated arrival date."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6082.897333079018
+    },
+    {
+      "case_id": "case-00006",
+      "injector": "CustomsHoldInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "customs_hold"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Jason Willis",
+              "email": "chambersleah@example.org"
+            }
+          ],
+          "reason": "The shipment is currently on customs hold in Gothenburg."
+        },
+        {
+          "type": "escalate",
+          "reason": "Shipment is held by customs; human intervention required to resolve the exception."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Jason Willis",
+                "email": "chambersleah@example.org"
+              }
+            ],
+            "reason": "The shipment is currently on customs hold in Gothenburg."
+          }
+        ],
+        "near_misses": [],
+        "extra": [
+          {
+            "type": "escalate",
+            "reason": "Shipment is held by customs; human intervention required to resolve the exception."
+          }
+        ],
+        "missing": [],
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      "latency_ms": 6239.152458962053
+    },
+    {
+      "case_id": "case-00007",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "rolled_sailing",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "Ever Northern Star - 139W"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-03-24"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-03-26"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Andrew Adams",
+              "email": "gomezjoanne@example.com"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing, resulting in a delay of the estimated departure and arrival dates."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "Ever Northern Star - 139W"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-03-24"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-03-26"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Andrew Adams",
+                "email": "gomezjoanne@example.com"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing, resulting in a delay of the estimated departure and arrival dates."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 7700.765333021991
+    },
+    {
+      "case_id": "case-00008",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2938.1043749162927
+    },
+    {
+      "case_id": "case-00009",
+      "injector": "CustomsHoldInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "customs_hold"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Renee Gibson",
+              "email": "john03@example.com"
+            }
+          ],
+          "reason": "The shipment is currently on customs hold in Nairobi."
+        },
+        {
+          "type": "escalate",
+          "reason": "Shipment is on customs hold and requires human intervention to resolve."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Renee Gibson",
+                "email": "john03@example.com"
+              }
+            ],
+            "reason": "The shipment is currently on customs hold in Nairobi."
+          }
+        ],
+        "near_misses": [],
+        "extra": [
+          {
+            "type": "escalate",
+            "reason": "Shipment is on customs hold and requires human intervention to resolve."
+          }
+        ],
+        "missing": [],
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      "latency_ms": 5297.624083003029
+    },
+    {
+      "case_id": "case-00010",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2383.858415996656
+    },
+    {
+      "case_id": "case-00011",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[1].etd",
+          "new_value": "2026-05-12"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[1].eta",
+          "new_value": "2026-05-16"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Karen Morton",
+              "email": "watkinsjose@example.com"
+            }
+          ],
+          "reason": "The shipment has a departure delay of 5 days on the second leg, affecting the final delivery date."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[1].etd",
+            "new_value": "2026-05-12"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[1].eta",
+            "new_value": "2026-05-16"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Karen Morton",
+                "email": "watkinsjose@example.com"
+              }
+            ],
+            "reason": "The shipment has a departure delay of 5 days on the second leg, affecting the final delivery date."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6827.232082956471
+    },
+    {
+      "case_id": "case-00012",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2615.6818330055103
+    },
+    {
+      "case_id": "case-00013",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-08-07"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-08-25"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Theresa Barr",
+              "email": "vcastillo@example.com"
+            }
+          ],
+          "reason": "The shipment departure has been delayed by 1 day, affecting the estimated delivery date."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-08-07"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-08-25"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Theresa Barr",
+                "email": "vcastillo@example.com"
+              }
+            ],
+            "reason": "The shipment departure has been delayed by 1 day, affecting the estimated delivery date."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6048.480874975212
+    },
+    {
+      "case_id": "case-00014",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[1].etd",
+          "new_value": "2026-06-13"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[1].eta",
+          "new_value": "2026-07-11"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Jason Mckay",
+              "email": "nstewart@example.com"
+            }
+          ],
+          "reason": "Shipment leg 1 is delayed by 2 days, affecting the estimated departure and arrival dates."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[1].etd",
+            "new_value": "2026-06-13"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[1].eta",
+            "new_value": "2026-07-11"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Jason Mckay",
+                "email": "nstewart@example.com"
+              }
+            ],
+            "reason": "Shipment leg 1 is delayed by 2 days, affecting the estimated departure and arrival dates."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6754.746707971208
+    },
+    {
+      "case_id": "case-00015",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3109.3883329303935
+    },
+    {
+      "case_id": "case-00016",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 4318.166915909387
+    },
+    {
+      "case_id": "case-00017",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "rolled_sailing",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "OOCL Meridian - 350W"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-03-31"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-04-03"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Kerry Tapia MD",
+              "email": "spark@example.org"
+            }
+          ],
+          "reason": "Shipment has been rolled to a new sailing, resulting in a delay of the estimated departure and arrival dates."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "OOCL Meridian - 350W"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-03-31"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-04-03"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Kerry Tapia MD",
+                "email": "spark@example.org"
+              }
+            ],
+            "reason": "Shipment has been rolled to a new sailing, resulting in a delay of the estimated departure and arrival dates."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 7713.473250041716
+    },
+    {
+      "case_id": "case-00018",
+      "injector": "CustomsHoldInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "customs_hold"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Crystal Lynch",
+              "email": "scottmatthew@example.net"
+            }
+          ],
+          "reason": "Shipment is currently on customs hold in Hong Kong"
+        },
+        {
+          "type": "escalate",
+          "reason": "Customs hold requires human intervention to resolve documentation or regulatory issues"
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Crystal Lynch",
+                "email": "scottmatthew@example.net"
+              }
+            ],
+            "reason": "Shipment is currently on customs hold in Hong Kong"
+          }
+        ],
+        "near_misses": [],
+        "extra": [
+          {
+            "type": "escalate",
+            "reason": "Customs hold requires human intervention to resolve documentation or regulatory issues"
+          }
+        ],
+        "missing": [],
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      "latency_ms": 4910.027708043344
+    },
+    {
+      "case_id": "case-00019",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3363.652208005078
+    },
+    {
+      "case_id": "case-00020",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2393.001375021413
+    },
+    {
+      "case_id": "case-00021",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2664.72987504676
+    },
+    {
+      "case_id": "case-00022",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2842.4223749898374
+    },
+    {
+      "case_id": "case-00023",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2389.776958967559
+    },
+    {
+      "case_id": "case-00024",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "rolled_sailing",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "MSC Valiant - 750E"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-03-23"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-03-27"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Christopher Mendez",
+              "email": "evanskaren@example.com"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing, affecting the departure and arrival dates of the first leg."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "MSC Valiant - 750E"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-03-23"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-03-27"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Christopher Mendez",
+                "email": "evanskaren@example.com"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing, affecting the departure and arrival dates of the first leg."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.8
+      },
+      "latency_ms": 7658.938291948289
+    },
+    {
+      "case_id": "case-00025",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2660.9541249927133
+    },
+    {
+      "case_id": "case-00026",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "rolled_sailing",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "OOCL Endeavour - 521W"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-02-04"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-02-08"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Derek Hall",
+              "email": "vatkins@example.org"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing for the first leg, resulting in a delay of the ETA."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "OOCL Endeavour - 521W"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-02-04"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-02-08"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Derek Hall",
+                "email": "vatkins@example.org"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing for the first leg, resulting in a delay of the ETA."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.8
+      },
+      "latency_ms": 8557.04391701147
+    },
+    {
+      "case_id": "case-00027",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-11-07"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Michael Collins",
+              "email": "rfields@example.net"
+            }
+          ],
+          "reason": "The shipment arrival in Tokyo has been delayed by 4 days. New ETA is 2025-11-07."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-11-07"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Michael Collins",
+                "email": "rfields@example.net"
+              }
+            ],
+            "reason": "The shipment arrival in Tokyo has been delayed by 4 days. New ETA is 2025-11-07."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5654.877583030611
+    },
+    {
+      "case_id": "case-00028",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3109.487915993668
+    },
+    {
+      "case_id": "case-00029",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "arrival_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-10-16"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[1].etd",
+          "new_value": "2025-10-16"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[1].eta",
+          "new_value": "2025-10-17"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Michael Rios",
+              "email": "ronald89@example.net"
+            }
+          ],
+          "reason": "The shipment is experiencing a delay of 3 days on the first leg, affecting the overall delivery schedule."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-10-16"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Michael Rios",
+                "email": "ronald89@example.net"
+              }
+            ],
+            "reason": "The shipment is experiencing a delay of 3 days on the first leg, affecting the overall delivery schedule."
+          }
+        ],
+        "near_misses": [],
+        "extra": [
+          {
+            "type": "update_property",
+            "path": "legs[1].etd",
+            "new_value": "2025-10-16"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[1].eta",
+            "new_value": "2025-10-17"
+          }
+        ],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 0.5,
+        "recall": 0.6666666666666666
+      },
+      "latency_ms": 7977.600791025907
+    },
+    {
+      "case_id": "case-00030",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "rolled_sailing",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "OOCL Valiant - 673S"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-07-11"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-08-01"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Thomas Snyder",
+              "email": "christophermckenzie@example.com"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing, resulting in a later departure and arrival date."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "OOCL Valiant - 673S"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-07-11"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-08-01"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Thomas Snyder",
+                "email": "christophermckenzie@example.com"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing, resulting in a later departure and arrival date."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 7454.71158309374
+    },
+    {
+      "case_id": "case-00031",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2519.0029579680413
+    },
+    {
+      "case_id": "case-00032",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2851.2712500523776
+    },
+    {
+      "case_id": "case-00033",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-04-16"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Matthew Gonzalez",
+              "email": "ysmith@example.net"
+            }
+          ],
+          "reason": "The shipment is delayed by 5 days; the new estimated arrival date is 2026-04-16."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-04-16"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Matthew Gonzalez",
+                "email": "ysmith@example.net"
+              }
+            ],
+            "reason": "The shipment is delayed by 5 days; the new estimated arrival date is 2026-04-16."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5604.797541047446
+    },
+    {
+      "case_id": "case-00034",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2956.14820800256
+    },
+    {
+      "case_id": "case-00035",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-05-14"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Raymond Malone",
+              "email": "donna09@example.com"
+            }
+          ],
+          "reason": "The shipment is delayed by 5 days, updating the estimated arrival date to 2026-05-14."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-05-14"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Raymond Malone",
+                "email": "donna09@example.com"
+              }
+            ],
+            "reason": "The shipment is delayed by 5 days, updating the estimated arrival date to 2026-05-14."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5439.937832998112
+    },
+    {
+      "case_id": "case-00036",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "departure_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[1].etd",
+          "new_value": "2025-09-26"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[1].eta",
+          "new_value": "2025-10-21"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[2].etd",
+          "new_value": "2025-10-22"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[2].eta",
+          "new_value": "2025-10-25"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Ms. Julie Cuevas",
+              "email": "luis56@example.net"
+            }
+          ],
+          "reason": "The shipment has been delayed by 1 day during the second leg, impacting subsequent arrival dates."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[1].etd",
+            "new_value": "2025-09-26"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[1].eta",
+            "new_value": "2025-10-21"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Ms. Julie Cuevas",
+                "email": "luis56@example.net"
+              }
+            ],
+            "reason": "The shipment has been delayed by 1 day during the second leg, impacting subsequent arrival dates."
+          }
+        ],
+        "near_misses": [],
+        "extra": [
+          {
+            "type": "update_property",
+            "path": "legs[2].etd",
+            "new_value": "2025-10-22"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[2].eta",
+            "new_value": "2025-10-25"
+          }
+        ],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 0.6,
+        "recall": 0.75
+      },
+      "latency_ms": 9516.785915941
+    },
+    {
+      "case_id": "case-00037",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2832.2659169789404
+    },
+    {
+      "case_id": "case-00038",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2798.607832984999
+    },
+    {
+      "case_id": "case-00039",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "departure_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-03-29"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-03-30"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Jessica Matthews",
+              "email": "lori60@example.com"
+            }
+          ],
+          "reason": "The first leg of the shipment has been delayed by 3 days, impacting the estimated departure and arrival dates."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-03-29"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-03-30"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Jessica Matthews",
+                "email": "lori60@example.com"
+              }
+            ],
+            "reason": "The first leg of the shipment has been delayed by 3 days, impacting the estimated departure and arrival dates."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      "latency_ms": 6816.998832975514
+    },
+    {
+      "case_id": "case-00040",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2856.3406670000404
+    },
+    {
+      "case_id": "case-00041",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3490.1369999861345
+    },
+    {
+      "case_id": "case-00042",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-04-03"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-04-03"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Timothy Campos",
+              "email": "herrerajennifer@example.com"
+            }
+          ],
+          "reason": "The shipment departure has been delayed by 5 days, updating the estimated arrival to 2026-04-03."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-04-03"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-04-03"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Timothy Campos",
+                "email": "herrerajennifer@example.com"
+              }
+            ],
+            "reason": "The shipment departure has been delayed by 5 days, updating the estimated arrival to 2026-04-03."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6765.793292084709
+    },
+    {
+      "case_id": "case-00043",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2787.997999927029
+    },
+    {
+      "case_id": "case-00044",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3745.55558396969
+    },
+    {
+      "case_id": "case-00045",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-05-19"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Clayton Winters",
+              "email": "hgonzalez@example.com"
+            }
+          ],
+          "reason": "The shipment departure is delayed by 2 days, resulting in a new ETA of 2026-05-19."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-05-19"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Clayton Winters",
+                "email": "hgonzalez@example.com"
+              }
+            ],
+            "reason": "The shipment departure is delayed by 2 days, resulting in a new ETA of 2026-05-19."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-05-02"
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.6666666666666666
+      },
+      "latency_ms": 5649.430167046376
+    },
+    {
+      "case_id": "case-00046",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 4231.861792039126
+    },
+    {
+      "case_id": "case-00047",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2828.6874999757856
+    },
+    {
+      "case_id": "case-00048",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-01-01"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "John Hill",
+              "email": "sarah55@example.net"
+            }
+          ],
+          "reason": "The shipment is delayed by 1 day; the new ETA is 2026-01-01."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-01-01"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "John Hill",
+                "email": "sarah55@example.net"
+              }
+            ],
+            "reason": "The shipment is delayed by 1 day; the new ETA is 2026-01-01."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5367.820333922282
+    },
+    {
+      "case_id": "case-00049",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[1].eta",
+          "new_value": "2026-07-25"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Jerry Griffin",
+              "email": "thomasjulie@example.org"
+            }
+          ],
+          "reason": "The shipment is delayed by 1 day and the new ETA for Nairobi is 2026-07-25"
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[1].eta",
+            "new_value": "2026-07-25"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Jerry Griffin",
+                "email": "thomasjulie@example.org"
+              }
+            ],
+            "reason": "The shipment is delayed by 1 day and the new ETA for Nairobi is 2026-07-25"
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6105.163499945775
+    },
+    {
+      "case_id": "case-00050",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2804.707790957764
+    },
+    {
+      "case_id": "case-00051",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "arrival_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-10-22"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Pamela Dominguez",
+              "email": "samantha95@example.com"
+            }
+          ],
+          "reason": "The shipment's arrival in Panama is delayed by 1 day."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-10-22"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Pamela Dominguez",
+                "email": "samantha95@example.com"
+              }
+            ],
+            "reason": "The shipment's arrival in Panama is delayed by 1 day."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.6666666666666666
+      },
+      "latency_ms": 5443.8113330397755
+    },
+    {
+      "case_id": "case-00052",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-04-30"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Jennifer Durham",
+              "email": "scott60@example.org"
+            }
+          ],
+          "reason": "The shipment is delayed by 2 days; the new estimated arrival date is 2026-04-30."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-04-30"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Jennifer Durham",
+                "email": "scott60@example.org"
+              }
+            ],
+            "reason": "The shipment is delayed by 2 days; the new estimated arrival date is 2026-04-30."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5661.327708978206
+    },
+    {
+      "case_id": "case-00053",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2392.643832950853
+    },
+    {
+      "case_id": "case-00054",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "departure_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-08-06"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-08-11"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Andrea Garcia",
+              "email": "oconnellryan@example.org"
+            }
+          ],
+          "reason": "The shipment has been delayed by 2 days on the first leg."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-08-06"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-08-11"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Andrea Garcia",
+                "email": "oconnellryan@example.org"
+              }
+            ],
+            "reason": "The shipment has been delayed by 2 days on the first leg."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      "latency_ms": 6038.561458000913
+    },
+    {
+      "case_id": "case-00055",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "rolled_sailing",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "MV Fortune - 425W"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-07-29"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-08-16"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Joseph Dennis",
+              "email": "uramirez@example.net"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing, affecting the ETD and ETA."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "MV Fortune - 425W"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-07-29"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-08-16"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Joseph Dennis",
+                "email": "uramirez@example.net"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing, affecting the ETD and ETA."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 7098.870874964632
+    },
+    {
+      "case_id": "case-00056",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "departure_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2025-12-19"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-12-23"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Monica Ramirez",
+              "email": "brenda03@example.net"
+            }
+          ],
+          "reason": "The first leg of the shipment has been delayed by 1 day."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2025-12-19"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-12-23"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Monica Ramirez",
+                "email": "brenda03@example.net"
+              }
+            ],
+            "reason": "The first leg of the shipment has been delayed by 1 day."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.75
+      },
+      "latency_ms": 7026.558540994301
+    },
+    {
+      "case_id": "case-00057",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3122.46458302252
+    },
+    {
+      "case_id": "case-00058",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2748.925124993548
+    },
+    {
+      "case_id": "case-00059",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2953.1486249761656
+    },
+    {
+      "case_id": "case-00060",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-12-04"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Rebecca Ray",
+              "email": "yvettesoto@example.net"
+            }
+          ],
+          "reason": "The shipment is delayed by 2 days, updating the estimated arrival date to 2025-12-04."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-12-04"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Rebecca Ray",
+                "email": "yvettesoto@example.net"
+              }
+            ],
+            "reason": "The shipment is delayed by 2 days, updating the estimated arrival date to 2025-12-04."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2025-11-14"
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.6666666666666666
+      },
+      "latency_ms": 5581.957958056591
+    },
+    {
+      "case_id": "case-00061",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2391.09766704496
+    },
+    {
+      "case_id": "case-00062",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2396.8263340648264
+    },
+    {
+      "case_id": "case-00063",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2998.3114160131663
+    },
+    {
+      "case_id": "case-00064",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3196.6740420321003
+    },
+    {
+      "case_id": "case-00065",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2386.7255409713835
+    },
+    {
+      "case_id": "case-00066",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3235.1767080836
+    },
+    {
+      "case_id": "case-00067",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2392.3978749662638
+    },
+    {
+      "case_id": "case-00068",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2650.7606249069795
+    },
+    {
+      "case_id": "case-00069",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2982.308042002842
+    },
+    {
+      "case_id": "case-00070",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3085.810207994655
+    },
+    {
+      "case_id": "case-00071",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3125.1435830490664
+    },
+    {
+      "case_id": "case-00072",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3078.641166910529
+    },
+    {
+      "case_id": "case-00073",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2515.6227910192683
+    },
+    {
+      "case_id": "case-00074",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3451.409917091951
+    },
+    {
+      "case_id": "case-00075",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-06-16"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Mark Meadows",
+              "email": "dennis85@example.org"
+            }
+          ],
+          "reason": "The shipment is delayed by 2 days, and the new ETA is 2026-06-16."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-06-16"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Mark Meadows",
+                "email": "dennis85@example.org"
+              }
+            ],
+            "reason": "The shipment is delayed by 2 days, and the new ETA is 2026-06-16."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5663.182874908671
+    },
+    {
+      "case_id": "case-00076",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3956.658959039487
+    },
+    {
+      "case_id": "case-00077",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "rolled_sailing",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "CMA CGM Endeavour - 832W"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2025-09-05"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-09-07"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Todd Gomez",
+              "email": "esanders@example.com"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing, resulting in a delay of the estimated departure and arrival dates."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "CMA CGM Endeavour - 832W"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2025-09-05"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-09-07"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Todd Gomez",
+                "email": "esanders@example.com"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing, resulting in a delay of the estimated departure and arrival dates."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 7886.4818749716505
+    },
+    {
+      "case_id": "case-00078",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-07-17"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-07-17"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Thomas Baird",
+              "email": "courtneyfoster@example.net"
+            }
+          ],
+          "reason": "The shipment has been delayed by 1 day."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-07-17"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-07-17"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Thomas Baird",
+                "email": "courtneyfoster@example.net"
+              }
+            ],
+            "reason": "The shipment has been delayed by 1 day."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6056.022958946414
+    },
+    {
+      "case_id": "case-00079",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3061.5124580217525
+    },
+    {
+      "case_id": "case-00080",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2752.191042061895
+    },
+    {
+      "case_id": "case-00081",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2615.4442499391735
+    },
+    {
+      "case_id": "case-00082",
+      "injector": "CustomsHoldInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "customs_hold"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "David Greene",
+              "email": "nunezkatherine@example.net"
+            }
+          ],
+          "reason": "Shipment is currently on customs hold in Miami."
+        },
+        {
+          "type": "escalate",
+          "reason": "Customs hold requires human intervention to resolve documentation or clearance issues."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "David Greene",
+                "email": "nunezkatherine@example.net"
+              }
+            ],
+            "reason": "Shipment is currently on customs hold in Miami."
+          }
+        ],
+        "near_misses": [],
+        "extra": [
+          {
+            "type": "escalate",
+            "reason": "Customs hold requires human intervention to resolve documentation or clearance issues."
+          }
+        ],
+        "missing": [],
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      "latency_ms": 4633.719415985979
+    },
+    {
+      "case_id": "case-00083",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2025-11-05"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-11-19"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Albert Wood",
+              "email": "kimberly55@example.org"
+            }
+          ],
+          "reason": "The shipment has been delayed by 1 day, affecting the estimated departure and arrival dates."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2025-11-05"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-11-19"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Albert Wood",
+                "email": "kimberly55@example.org"
+              }
+            ],
+            "reason": "The shipment has been delayed by 1 day, affecting the estimated departure and arrival dates."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6124.658833025023
+    },
+    {
+      "case_id": "case-00084",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3700.027166050859
+    },
+    {
+      "case_id": "case-00085",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-05-15"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Sara Reynolds",
+              "email": "charlesfuller@example.net"
+            }
+          ],
+          "reason": "The shipment is delayed by 1 day, with a new ETA of 2026-05-15."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-05-15"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Sara Reynolds",
+                "email": "charlesfuller@example.net"
+              }
+            ],
+            "reason": "The shipment is delayed by 1 day, with a new ETA of 2026-05-15."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5659.884541062638
+    },
+    {
+      "case_id": "case-00086",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "departure_delay",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[1].etd",
+          "new_value": "2026-07-31"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[1].eta",
+          "new_value": "2026-08-21"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[2].etd",
+          "new_value": "2026-08-22"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[2].eta",
+          "new_value": "2026-08-25"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Christian Vazquez",
+              "email": "xharrison@example.com"
+            }
+          ],
+          "reason": "The shipment has encountered a departure delay of 3 days in Singapore, impacting the overall delivery schedule."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[1].etd",
+            "new_value": "2026-07-31"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[1].eta",
+            "new_value": "2026-08-21"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Christian Vazquez",
+                "email": "xharrison@example.com"
+              }
+            ],
+            "reason": "The shipment has encountered a departure delay of 3 days in Singapore, impacting the overall delivery schedule."
+          }
+        ],
+        "near_misses": [],
+        "extra": [
+          {
+            "type": "update_property",
+            "path": "legs[2].etd",
+            "new_value": "2026-08-22"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[2].eta",
+            "new_value": "2026-08-25"
+          }
+        ],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 0.6,
+        "recall": 0.75
+      },
+      "latency_ms": 9651.537124998868
+    },
+    {
+      "case_id": "case-00087",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "rolled_sailing",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "Ever Pacific Dawn - 830W"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2025-12-23"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-12-25"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "David Williams",
+              "email": "jessica02@example.com"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing, resulting in a delay of the ETD and ETA."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "Ever Pacific Dawn - 830W"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2025-12-23"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-12-25"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "David Williams",
+                "email": "jessica02@example.com"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing, resulting in a delay of the ETD and ETA."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 7740.673667052761
+    },
+    {
+      "case_id": "case-00088",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2952.734792022966
+    },
+    {
+      "case_id": "case-00089",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2544.8310419451445
+    },
+    {
+      "case_id": "case-00090",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2862.652915995568
+    },
+    {
+      "case_id": "case-00091",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3812.59858305566
+    },
+    {
+      "case_id": "case-00092",
+      "injector": "ArrivalDelayInjector",
+      "tags": [
+        "direct",
+        "underway",
+        "arrival_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-02-12"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Regina Gray",
+              "email": "ryan11@example.org"
+            }
+          ],
+          "reason": "The shipment is delayed by 3 days; the new ETA is 2026-02-12."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-02-12"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Regina Gray",
+                "email": "ryan11@example.org"
+              }
+            ],
+            "reason": "The shipment is delayed by 3 days; the new ETA is 2026-02-12."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 5626.279709045775
+    },
+    {
+      "case_id": "case-00093",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2517.1177089214325
+    },
+    {
+      "case_id": "case-00094",
+      "injector": "DepartureDelayInjector",
+      "tags": [
+        "transshipment",
+        "underway",
+        "departure_delay",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[1].etd",
+          "new_value": "2026-07-09"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[1].eta",
+          "new_value": "2026-08-04"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Travis Wilson",
+              "email": "pamela71@example.net"
+            }
+          ],
+          "reason": "The shipment is experiencing a departure delay of 5 days on the second leg."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[1].etd",
+            "new_value": "2026-07-09"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[1].eta",
+            "new_value": "2026-08-04"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Travis Wilson",
+                "email": "pamela71@example.net"
+              }
+            ],
+            "reason": "The shipment is experiencing a departure delay of 5 days on the second leg."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 6712.010791990906
+    },
+    {
+      "case_id": "case-00095",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "rolled_sailing",
+        "final_leg"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "HMM Endeavour - 365E"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2025-09-27"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2025-10-15"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Theresa Weaver",
+              "email": "rspencer@example.com"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing, resulting in a delayed ETD and ETA."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "HMM Endeavour - 365E"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2025-09-27"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2025-10-15"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Theresa Weaver",
+                "email": "rspencer@example.com"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing, resulting in a delayed ETD and ETA."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "latency_ms": 7716.8780830688775
+    },
+    {
+      "case_id": "case-00096",
+      "injector": "RolledSailingInjector",
+      "tags": [
+        "transshipment",
+        "pre_departure",
+        "rolled_sailing",
+        "connection_risk"
+      ],
+      "should_act": true,
+      "actions": [
+        {
+          "type": "update_property",
+          "path": "legs[0].conveyance",
+          "new_value": "MV Endeavour - 623E"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].etd",
+          "new_value": "2026-07-14"
+        },
+        {
+          "type": "update_property",
+          "path": "legs[0].eta",
+          "new_value": "2026-07-18"
+        },
+        {
+          "type": "notify",
+          "recipients": [
+            {
+              "name": "Jose Turner",
+              "email": "victoriaramirez@example.org"
+            }
+          ],
+          "reason": "The shipment has been rolled to a new sailing for the first leg, delaying the ETA."
+        }
+      ],
+      "error": null,
+      "diff": {
+        "passed": false,
+        "matched": [
+          {
+            "type": "update_property",
+            "path": "legs[0].conveyance",
+            "new_value": "MV Endeavour - 623E"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].etd",
+            "new_value": "2026-07-14"
+          },
+          {
+            "type": "update_property",
+            "path": "legs[0].eta",
+            "new_value": "2026-07-18"
+          },
+          {
+            "type": "notify",
+            "recipients": [
+              {
+                "name": "Jose Turner",
+                "email": "victoriaramirez@example.org"
+              }
+            ],
+            "reason": "The shipment has been rolled to a new sailing for the first leg, delaying the ETA."
+          }
+        ],
+        "near_misses": [],
+        "extra": [],
+        "missing": [
+          {
+            "type": "escalate",
+            "reason": null
+          }
+        ],
+        "precision": 1.0,
+        "recall": 0.8
+      },
+      "latency_ms": 8428.018917096779
+    },
+    {
+      "case_id": "case-00097",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2998.1290829600766
+    },
+    {
+      "case_id": "case-00098",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "direct",
+        "pre_departure",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 2257.3769169393927
+    },
+    {
+      "case_id": "case-00099",
+      "injector": "RoutineEventInjector",
+      "tags": [
+        "transshipment",
+        "arrived",
+        "routine",
+        "clean"
+      ],
+      "should_act": false,
+      "actions": [],
+      "error": null,
+      "diff": {
+        "passed": true,
+        "matched": [],
+        "near_misses": [],
+        "extra": [],
+        "missing": [],
+        "precision": null,
+        "recall": null
+      },
+      "latency_ms": 3698.173000011593
+    }
+  ]
+}

@@ -21,6 +21,24 @@ Available actions:
 {actions}
 </actions>
 
+Operating policy:
+<policy>
+- Act only when the event changes something. A routine confirmation that
+  matches what the shipment state already says needs no action.
+- Keep the shipment state truthful after a schedule change:
+  - An arrival delay moves the affected leg's eta by the delay.
+  - A departure delay moves BOTH the affected leg's etd and its eta by the
+    same number of days — a later departure arrives later too.
+  - A rolled sailing replaces the affected leg's conveyance, etd, and eta
+    with the new values from the event.
+- Notify the customer contact (shipment.customer.contact) once about any
+  disruption: a delay, a rolled sailing, or a customs hold.
+- Escalate to a human operator only when the change has downstream impact:
+  if any leg comes AFTER the affected leg, its connection may be missed and
+  need rebooking. A disruption on the final leg is not escalated. A customs
+  hold is notify-only: nothing to update, nothing to escalate.
+</policy>
+
 Your reply must be a single JSON object with one key, "actions", holding an array of action objects. It must validate against this JSON Schema:
 
 <schema>
