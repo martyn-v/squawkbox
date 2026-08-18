@@ -25,7 +25,31 @@ uv run -m evals compare     # diff two run reports: metric deltas per slice and 
 uv run -m evals push        # upload the cases file to Langfuse as a dataset
 ```
 
-`generate` takes `--seed` (default 42) and `--count`/`-n` (default 30, total cases; lane templates are cycled round-robin). `run` takes `--model` (a `provider/model` spec, default `ollama/gemma4:31b`) and `--temperature` (default 0.5), plus `--label` to record what the run is testing, `--summarize` to write the markdown summary immediately after the run, and `--no-langfuse` to skip [Langfuse mirroring](#langfuse). `summarize` takes `--results-file` (omit it to pick from a list) and its own `--model` and `--temperature` (default 0.2 — summarization wants less creativity than the agent under test). `compare` takes two results files as arguments (omit them to pick two from a list), plus `-o` to also write the comparison markdown to a file and `--force` to compare across differing case files. All accept path overrides; see `--help` on each.
+**`generate`**
+
+- `--seed` — default 42
+- `--count`/`-n` — default 30; total cases, lane templates cycled round-robin
+
+**`run`**
+
+- `--model` — a `provider/model` spec, default `ollama/gemma4:31b`
+- `--temperature` — default 0.5
+- `--label` — free-text record of what the run is testing
+- `--summarize` — write the markdown summary immediately after the run
+- `--no-langfuse` — skip [Langfuse mirroring](#langfuse)
+
+**`summarize`**
+
+- `--results-file` — omit it to pick from a list
+- `--model`, `--temperature` — its own model settings, default temperature 0.2: summarization wants less creativity than the agent under test
+
+**`compare`**
+
+- two results files as arguments — omit them to pick two from a list
+- `-o` — also write the comparison markdown to a file
+- `--force` — compare across differing case files anyway
+
+All commands accept path overrides; see `--help` on each.
 
 ## Layout
 
@@ -92,6 +116,8 @@ All injectors live in `evals/generation/injectors.py` and subclass `ScenarioInje
 
 Delay and roll injectors always target the *first* matching leg. `connection_risk` marks cases where a later leg exists, so a rebooking may be needed — hence the expected escalation. `RoutineEventInjector` is a placeholder (see its FIXME): it confirms an existing leg ETA rather than generating varied routine traffic.
 
+**Known limitation — narrow-window injectors are starved.** Each case draws uniformly among the injectors applicable to its shipment, so slice sizes are a product of two filters: how wide the injector's lifecycle window is, and how crowded the pool is inside it. `CustomsHoldInjector` is the worst case: it applies only in the final-arrived-but-not-delivered slot (~1 lifecycle position, and transshipment arrivals don't count), where the only other applicable injector is routine — so roughly (shipments that stopped there) × ½. In a 100-case file that yielded n=4, a slice whose CI spans half the axis. Weighting the draw (see roadmap) can't fully fix this: the eligible-state count is a ceiling, so useful n for these injectors also needs biasing the lifecycle progression point toward the states they require.
+
 ### Future events (ideas, not implemented)
 
 Candidates that would each test a decision shape the current events don't. Per the anti-goals, an event only earns a place if it changes what the agent must decide.
@@ -142,6 +168,7 @@ Scoring is a deterministic diff between the agent's action list and the expected
 A case passes only when all three failure buckets are empty. The report aggregates:
 
 - **Precision and recall**, micro-averaged overall and per slice (by injector, by tag, by action type)
+- **95% confidence intervals** (Wilson, via statsmodels) on every pass rate, overall and per slice — so a thin slice reads as the anecdote it is instead of masquerading as a measurement
 - **A decision matrix** for the act/stay-quiet call itself — including the false-alarm rate on clean cases, because a noisy agent gets ignored by ops staff
 - **Per-case latency**
 
@@ -156,7 +183,7 @@ The JSON report is exhaustive but not readable. `summarize` hands the whole repo
 `compare` diffs two run reports to answer "did this change help" — model A vs B, prompt v1 vs v2. The older run is the baseline, the newer the candidate, regardless of argument order. The report has three sections:
 
 - **Header** — what was tested on each side (model, temperature, label, git sha, prompt hash), with differing rows flagged. Differing git sha or prompt hash is normal — that's usually the point of the comparison.
-- **Summary deltas** — pass rate, precision, and recall as `baseline → candidate (Δ)` for overall and each slice (injector, tag, action type) with each slice's `n` visible, plus the decision-matrix rates (false alarm, missed act).
+- **Summary deltas** — pass rate, precision, and recall as `baseline → candidate (Δ)` for overall and each slice (injector, tag, action type) with each slice's `n` visible, plus the decision-matrix rates (false alarm, missed act). Pass rates carry their 95% CI as `±` half-width (e.g. `0.82 ±0.07`) — approximate, since Wilson intervals are asymmetric; the exact bounds are in the report JSON.
 - **Case flips** — joined on case id: regressed cases first with their diff reasons, then fixed, still-failing, and cases present in only one run.
 
 Comparing runs from different case files is refused — deltas across datasets are meaningless. `--force` overrides: the deltas are flagged as not like-for-like and case flips are omitted. Rendering is deterministic markdown (rich in the terminal, plain text via `-o`); no LLM is involved anywhere.
