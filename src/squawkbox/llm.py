@@ -22,7 +22,7 @@ def create_model(
             temperature=temperature,
             format=format,
             reasoning=reasoning,
-            client_kwargs={"timeout": DEFAULT_TIMEOUT_S},
+            client_kwargs={"timeout": timeout},
         )
 
     raise ValueError(f"Unsupported model: {model}")
