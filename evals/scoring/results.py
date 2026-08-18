@@ -1,4 +1,5 @@
 from pydantic import BaseModel, computed_field
+from statsmodels.stats.proportion import proportion_confint
 
 from evals.models import CaseFileMeta
 from squawkbox.models import Action
@@ -64,6 +65,17 @@ class SliceScore(BaseModel):
     @property
     def pass_rate(self) -> float | None:
         return self.passed_cases / self.cases if self.cases else None
+
+    @computed_field
+    @property
+    def pass_rate_ci(self) -> tuple[float, float] | None:
+        """95% Wilson interval on the pass rate. Cases are the independent unit;
+        if per-case repeats are ever added, this must stay case-level, never
+        pooled over attempts (attempts within a case are correlated)."""
+        if not self.cases:
+            return None
+        lo, hi = proportion_confint(self.passed_cases, self.cases, method="wilson")
+        return (float(lo), float(hi))
 
     @computed_field
     @property

@@ -14,6 +14,8 @@ from evals.scoring.results import (
 class MetricDelta(BaseModel):
     baseline: float | None
     candidate: float | None
+    baseline_ci: tuple[float, float] | None = None
+    candidate_ci: tuple[float, float] | None = None
 
     @computed_field
     @property
@@ -41,6 +43,8 @@ class SliceDelta(BaseModel):
             pass_rate=MetricDelta(
                 baseline=baseline.pass_rate if baseline else None,
                 candidate=candidate.pass_rate if candidate else None,
+                baseline_ci=baseline.pass_rate_ci if baseline else None,
+                candidate_ci=candidate.pass_rate_ci if candidate else None,
             ),
             precision=MetricDelta(
                 baseline=baseline.precision if baseline else None,
@@ -309,14 +313,25 @@ def _n_cell(s: SliceDelta) -> str:
 
 
 def _metric_cell(m: MetricDelta) -> str:
-    """baseline → candidate (Δ); an uncomputable side renders as —."""
+    """baseline → candidate (Δ); an uncomputable side renders as —.
+    Sides carrying a confidence interval render it as [lo, hi] after the value."""
     if m.baseline is None and m.candidate is None:
         return "—"
-    baseline = "—" if m.baseline is None else f"{m.baseline:.2f}"
-    candidate = "—" if m.candidate is None else f"{m.candidate:.2f}"
+    baseline = _value_with_ci(m.baseline, m.baseline_ci)
+    candidate = _value_with_ci(m.candidate, m.candidate_ci)
     # explicit sign so regressions stand out scanning down the column
     delta = "" if m.delta is None else f" ({m.delta:+.2f})"
     return f"{baseline} → {candidate}{delta}"
+
+
+def _value_with_ci(value: float | None, ci: tuple[float, float] | None) -> str:
+    if value is None:
+        return "—"
+    if ci is None:
+        return f"{value:.2f}"
+    # ±half-width for scanability; Wilson is asymmetric, so this is approximate —
+    # the exact [lo, hi] stays in the report JSON
+    return f"{value:.2f} ±{(ci[1] - ci[0]) / 2:.2f}"
 
 
 def _cell(value: object) -> str:

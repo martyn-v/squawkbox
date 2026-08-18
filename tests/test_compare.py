@@ -334,3 +334,45 @@ class TestRenderDecisions:
         assert "missed act" in text
         assert "0.25 → 0.50 (+0.25)" in text  # false alarm worsened
         assert "0.25 → 0.00 (-0.25)" in text  # missed act improved
+
+
+class TestPassRateCI:
+    def scores(self) -> tuple[SliceScore, SliceScore]:
+        def s(passed: int) -> SliceScore:
+            return SliceScore(
+                cases=100,
+                passed_cases=passed,
+                exact_matches=0,
+                near_misses=0,
+                false_positives=0,
+                false_negatives=0,
+            )
+
+        return s(82), s(90)
+
+    def test_slice_delta_carries_pass_rate_cis(self):
+        baseline, candidate = self.scores()
+        delta = SliceDelta.from_scores(baseline, candidate)
+        lo, hi = delta.pass_rate.baseline_ci
+        assert lo == pytest.approx(0.7333, abs=1e-3)
+        assert hi == pytest.approx(0.8830, abs=1e-3)
+        assert delta.pass_rate.candidate_ci is not None
+
+    def test_missing_side_has_no_ci(self):
+        _, candidate = self.scores()
+        delta = SliceDelta.from_scores(None, candidate)
+        assert delta.pass_rate.baseline_ci is None
+
+    def test_rendered_pass_rate_cell_shows_intervals(self):
+        from evals.scoring.compare import _metric_cell
+
+        baseline, candidate = self.scores()
+        delta = SliceDelta.from_scores(baseline, candidate)
+        cell = _metric_cell(delta.pass_rate)
+        assert cell == "0.82 ±0.07 → 0.90 ±0.06 (+0.08)"
+
+    def test_rendered_cell_without_ci_is_unchanged(self):
+        cell = MetricDelta(baseline=0.5, candidate=0.75)
+        from evals.scoring.compare import _metric_cell
+
+        assert _metric_cell(cell) == "0.50 → 0.75 (+0.25)"
